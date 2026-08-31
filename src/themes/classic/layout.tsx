@@ -2,10 +2,14 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { useStorefrontStore } from "@/stores/storefront-store";
+import {
+  selectCartCount,
+  useStorefrontStore,
+} from "@/stores/storefront-store";
 
 export function ClassicLayout({ children }: { children: ReactNode }) {
   const locale = useStorefrontStore((state) => state.locale);
+  const cartCount = useStorefrontStore(selectCartCount);
   const businessName = useStorefrontStore(
     (state) => state.config.branding.business_name,
   );
@@ -31,6 +35,9 @@ export function ClassicLayout({ children }: { children: ReactNode }) {
             </Link>
             <Link href={`/${locale}/contact`} className="hover:underline">
               Contact
+            </Link>
+            <Link href={`/${locale}/checkout`} className="hover:underline">
+              Checkout{cartCount > 0 ? ` (${cartCount})` : ""}
             </Link>
             <Link href={`/${locale}/signup`} className="hover:underline">
               Signup

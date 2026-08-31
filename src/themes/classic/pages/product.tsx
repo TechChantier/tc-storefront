@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useStorefrontStore } from "@/stores/storefront-store";
+import { ClassicAddToCartButton } from "../cart-controls";
 
 function formatPrice(price: number, currency: string) {
   return `${price.toLocaleString()} ${currency}`;
@@ -44,6 +45,9 @@ export function ClassicProductPage() {
       <p className="mt-1 text-sm text-stone-500">
         {product.available ? "In stock" : "Unavailable"}
       </p>
+      <div className="mt-6">
+        <ClassicAddToCartButton product={product} />
+      </div>
 
       {images.length > 0 ? (
         <div className="mt-6 grid gap-3 sm:grid-cols-2">

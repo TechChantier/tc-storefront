@@ -2,10 +2,14 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { useStorefrontStore } from "@/stores/storefront-store";
+import {
+  selectCartCount,
+  useStorefrontStore,
+} from "@/stores/storefront-store";
 
 export function ProLayout({ children }: { children: ReactNode }) {
   const locale = useStorefrontStore((state) => state.locale);
+  const cartCount = useStorefrontStore(selectCartCount);
   const businessName = useStorefrontStore(
     (state) => state.config.branding.business_name,
   );
@@ -33,6 +37,9 @@ export function ProLayout({ children }: { children: ReactNode }) {
             </Link>
             <Link href={`/${locale}/contact`} className="hover:text-white">
               Contact
+            </Link>
+            <Link href={`/${locale}/checkout`} className="hover:text-white">
+              Checkout{cartCount > 0 ? ` (${cartCount})` : ""}
             </Link>
             <Link href={`/${locale}/signup`} className="hover:text-white">
               Signup

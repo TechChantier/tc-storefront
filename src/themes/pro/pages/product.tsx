@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useStorefrontStore } from "@/stores/storefront-store";
+import { ProAddToCartButton } from "../cart-controls";
 
 function formatPrice(price: number, currency: string) {
   return `${price.toLocaleString()} ${currency}`;
@@ -50,6 +51,9 @@ export function ProProductPage() {
       <p className="mt-1 text-xs uppercase tracking-wider text-slate-500">
         {product.available ? "In stock" : "Unavailable"}
       </p>
+      <div className="mt-6">
+        <ProAddToCartButton product={product} />
+      </div>
 
       {images.length > 0 ? (
         <div className="mt-8 grid gap-3 sm:grid-cols-2">

@@ -6,6 +6,7 @@ import {
   DEFAULT_PRODUCT_PAGE,
 } from "@/lib/catalog/product-query";
 import { useStorefrontStore } from "@/stores/storefront-store";
+import { ClassicAddToCartButton } from "../cart-controls";
 
 function formatPrice(price: number, currency: string) {
   return `${price.toLocaleString()} ${currency}`;
@@ -129,6 +130,9 @@ export function ClassicProductListPage() {
                   </p>
                 </div>
               </Link>
+              <div className="px-4 pb-4">
+                <ClassicAddToCartButton product={product} />
+              </div>
             </li>
           ))}
         </ul>

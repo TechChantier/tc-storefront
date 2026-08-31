@@ -2,6 +2,7 @@ import type { StorefrontTemplate } from "@/themes/contracts";
 import { ClassicLayout } from "./layout";
 import { ClassicAboutPage } from "./pages/about";
 import { ClassicCategoryListPage } from "./pages/categories";
+import { ClassicCheckoutPage } from "./pages/checkout";
 import { ClassicContactPage } from "./pages/contact";
 import { ClassicHomePage } from "./pages/home";
 import { ClassicProductPage } from "./pages/product";
@@ -17,6 +18,7 @@ const classicTheme: StorefrontTemplate = {
   CategoryListPage: ClassicCategoryListPage,
   ProductListPage: ClassicProductListPage,
   ProductPage: ClassicProductPage,
+  CheckoutPage: ClassicCheckoutPage,
 };
 
 export default classicTheme;

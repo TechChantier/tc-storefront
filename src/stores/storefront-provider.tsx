@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useLayoutEffect, useState, type ReactNode } from "react";
+import { loadPersistedCart } from "@/lib/cart/persistence";
 import type { StorefrontConfig } from "@/lib/storefront/types";
 import {
   createStorefrontStore,
@@ -23,6 +24,12 @@ export function StorefrontProvider({
   const [store] = useState(() =>
     createStorefrontStore({ config, locale, hostname }),
   );
+
+  useLayoutEffect(() => {
+    store
+      .getState()
+      .hydrateCart(loadPersistedCart(config.tcpos_subdomain));
+  }, [store, config.tcpos_subdomain]);
 
   return (
     <StorefrontStoreContext.Provider value={store}>

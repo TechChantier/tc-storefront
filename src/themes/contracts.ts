@@ -13,4 +13,5 @@ export type StorefrontTemplate = {
   CategoryListPage: ComponentType;
   ProductListPage: ComponentType;
   ProductPage: ComponentType;
+  CheckoutPage: ComponentType;
 };
