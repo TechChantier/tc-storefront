@@ -1,0 +1,43 @@
+"use client";
+
+import Link from "next/link";
+import { buildProductListHref } from "@/lib/catalog/product-query";
+import { useStorefrontStore } from "@/stores/storefront-store";
+
+export function ClassicCategoryListPage() {
+  const locale = useStorefrontStore((state) => state.locale);
+  const categories = useStorefrontStore((state) => state.categories);
+  const status = useStorefrontStore((state) => state.categoriesStatus);
+
+  return (
+    <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-6 py-12">
+      <h1 className="text-3xl font-semibold tracking-tight">
+        Classic — Categories
+      </h1>
+
+      {status !== "ok" && status !== "idle" ? (
+        <p className="mt-8 text-stone-600">Categories could not be loaded.</p>
+      ) : categories.length === 0 ? (
+        <p className="mt-8 text-stone-600">No categories yet.</p>
+      ) : (
+        <ul className="mt-8 divide-y divide-stone-200 border-t border-stone-200">
+          {categories.map((category) => (
+            <li key={category.id} className="py-4">
+              <Link
+                href={buildProductListHref(locale, {
+                  category: category.slug,
+                })}
+                className="flex items-baseline justify-between gap-4 hover:underline"
+              >
+                <span className="text-lg">{category.name}</span>
+                <span className="text-sm text-stone-500">
+                  {category.product_count ?? 0} products
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
+  );
+}

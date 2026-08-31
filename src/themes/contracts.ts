@@ -10,4 +10,7 @@ export type StorefrontTemplate = {
   AboutPage: ComponentType;
   ContactPage: ComponentType;
   SignupPage: ComponentType;
+  CategoryListPage: ComponentType;
+  ProductListPage: ComponentType;
+  ProductPage: ComponentType;
 };

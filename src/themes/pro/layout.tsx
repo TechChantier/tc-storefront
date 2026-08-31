@@ -22,6 +22,12 @@ export function ProLayout({ children }: { children: ReactNode }) {
             <Link href={`/${locale}`} className="hover:text-white">
               Home
             </Link>
+            <Link href={`/${locale}/products`} className="hover:text-white">
+              Products
+            </Link>
+            <Link href={`/${locale}/categories`} className="hover:text-white">
+              Categories
+            </Link>
             <Link href={`/${locale}/about`} className="hover:text-white">
               About
             </Link>

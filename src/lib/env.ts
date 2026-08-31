@@ -16,6 +16,8 @@ function readWithDefault(name: string, fallback: string): string {
 
 export const env = {
   tcposApiBaseUrl: readOptional("TCPOS_API_BASE_URL"),
+  tcposTenantRootUrl: readOptional("TCPOS_TENANT_ROOT_URL"),
+  tcposTenantHostMode: readWithDefault("TCPOS_TENANT_HOST_MODE", "subdomain"),
   storefrontServiceToken: readOptional("STOREFRONT_SERVICE_TOKEN"),
   resolveRevalidateSeconds: Number(
     readWithDefault("STOREFRONT_RESOLVE_REVALIDATE_SECONDS", "60"),

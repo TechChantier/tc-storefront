@@ -20,6 +20,12 @@ export function ClassicLayout({ children }: { children: ReactNode }) {
             <Link href={`/${locale}`} className="hover:underline">
               Home
             </Link>
+            <Link href={`/${locale}/products`} className="hover:underline">
+              Products
+            </Link>
+            <Link href={`/${locale}/categories`} className="hover:underline">
+              Categories
+            </Link>
             <Link href={`/${locale}/about`} className="hover:underline">
               About
             </Link>
