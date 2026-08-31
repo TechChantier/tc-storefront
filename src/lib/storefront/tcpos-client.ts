@@ -11,6 +11,17 @@ export type StorefrontFetchResult<T> =
   | { status: "invalid_locale" }
   | { status: "redirect"; redirectSlug: string; permanent: boolean };
 
+export type StorefrontMutateResult<T> =
+  | { status: "ok"; data: T }
+  | {
+      status: "error";
+      http: number;
+      code: string;
+      message: string;
+      errors?: Record<string, unknown>;
+    }
+  | { status: "unavailable" };
+
 type StorefrontFetchOptions = {
   tcposSubdomain: string;
   path: string;
@@ -200,6 +211,120 @@ export async function storefrontFetch<T>(
       data: (raw as { data: T }).data,
       meta: (raw as { meta?: unknown }).meta,
     };
+  } catch {
+    logEvent("error", "tcpos_api.request_failed", {
+      tcpos_subdomain: options.tcposSubdomain,
+      path: options.path,
+    });
+    return { status: "unavailable" };
+  }
+}
+
+function readErrorEnvelope(payload: unknown): {
+  code: string;
+  message: string;
+  errors?: Record<string, unknown>;
+} | null {
+  if (!payload || typeof payload !== "object") return null;
+  const record = payload as Record<string, unknown>;
+  const code = typeof record.code === "string" ? record.code : undefined;
+  if (!code) return null;
+  const message =
+    typeof record.message === "string" ? record.message : "Request failed.";
+  const errors =
+    record.errors && typeof record.errors === "object"
+      ? (record.errors as Record<string, unknown>)
+      : undefined;
+  return { code, message, errors };
+}
+
+export async function storefrontMutate<T>(
+  options: StorefrontFetchOptions,
+): Promise<StorefrontMutateResult<T>> {
+  const token = getServiceToken();
+  if (!token) {
+    logEvent("error", "tcpos_api.missing_server_config", {
+      has_token: false,
+    });
+    return { status: "unavailable" };
+  }
+
+  const href = storefrontApiUrl(options.tcposSubdomain, options.path);
+  if (!href) {
+    logEvent("error", "tcpos_api.missing_tenant_url", {
+      tcpos_subdomain: options.tcposSubdomain,
+      host_mode: env.tcposTenantHostMode,
+    });
+    return { status: "unavailable" };
+  }
+
+  const url = new URL(href);
+  appendSearchParams(url, options.searchParams);
+  const method = options.method ?? "POST";
+
+  try {
+    const response = await fetch(url.toString(), {
+      method,
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body:
+        options.body !== undefined ? JSON.stringify(options.body) : undefined,
+      cache: "no-store",
+    });
+
+    let raw: unknown = null;
+    try {
+      raw = await response.json();
+    } catch {
+      raw = null;
+    }
+
+    if (response.ok) {
+      if (
+        !raw ||
+        typeof raw !== "object" ||
+        (raw as { success?: unknown }).success !== true ||
+        !("data" in raw)
+      ) {
+        logEvent("error", "tcpos_api.invalid_response", {
+          tcpos_subdomain: options.tcposSubdomain,
+          path: options.path,
+        });
+        return { status: "unavailable" };
+      }
+
+      return { status: "ok", data: (raw as { data: T }).data };
+    }
+
+    const envelope = readErrorEnvelope(raw);
+    if (envelope) {
+      return {
+        status: "error",
+        http: response.status,
+        code: envelope.code,
+        message: envelope.message,
+        errors: envelope.errors,
+      };
+    }
+
+    if (response.status === 429) {
+      return {
+        status: "error",
+        http: 429,
+        code: "RATE_LIMIT_EXCEEDED",
+        message: "Too many requests. Try again shortly.",
+      };
+    }
+
+    logEvent("error", "tcpos_api.unavailable", {
+      tcpos_subdomain: options.tcposSubdomain,
+      path: options.path,
+      status: response.status,
+    });
+    return { status: "unavailable" };
   } catch {
     logEvent("error", "tcpos_api.request_failed", {
       tcpos_subdomain: options.tcposSubdomain,

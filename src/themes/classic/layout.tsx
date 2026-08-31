@@ -36,8 +36,11 @@ export function ClassicLayout({ children }: { children: ReactNode }) {
             <Link href={`/${locale}/contact`} className="hover:underline">
               Contact
             </Link>
+            <Link href={`/${locale}/cart`} className="hover:underline">
+              Cart{cartCount > 0 ? ` (${cartCount})` : ""}
+            </Link>
             <Link href={`/${locale}/checkout`} className="hover:underline">
-              Checkout{cartCount > 0 ? ` (${cartCount})` : ""}
+              Checkout
             </Link>
             <Link href={`/${locale}/signup`} className="hover:underline">
               Signup

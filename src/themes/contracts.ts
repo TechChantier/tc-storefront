@@ -13,5 +13,6 @@ export type StorefrontTemplate = {
   CategoryListPage: ComponentType;
   ProductListPage: ComponentType;
   ProductPage: ComponentType;
+  CartPage: ComponentType;
   CheckoutPage: ComponentType;
 };

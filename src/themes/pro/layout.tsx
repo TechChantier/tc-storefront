@@ -38,8 +38,11 @@ export function ProLayout({ children }: { children: ReactNode }) {
             <Link href={`/${locale}/contact`} className="hover:text-white">
               Contact
             </Link>
+            <Link href={`/${locale}/cart`} className="hover:text-white">
+              Cart{cartCount > 0 ? ` (${cartCount})` : ""}
+            </Link>
             <Link href={`/${locale}/checkout`} className="hover:text-white">
-              Checkout{cartCount > 0 ? ` (${cartCount})` : ""}
+              Checkout
             </Link>
             <Link href={`/${locale}/signup`} className="hover:text-white">
               Signup

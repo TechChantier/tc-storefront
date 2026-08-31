@@ -1,6 +1,7 @@
 import type { StorefrontTemplate } from "@/themes/contracts";
 import { ProLayout } from "./layout";
 import { ProAboutPage } from "./pages/about";
+import { ProCartPage } from "./pages/cart";
 import { ProCategoryListPage } from "./pages/categories";
 import { ProCheckoutPage } from "./pages/checkout";
 import { ProContactPage } from "./pages/contact";
@@ -18,6 +19,7 @@ const proTheme: StorefrontTemplate = {
   CategoryListPage: ProCategoryListPage,
   ProductListPage: ProProductListPage,
   ProductPage: ProProductPage,
+  CartPage: ProCartPage,
   CheckoutPage: ProCheckoutPage,
 };
 

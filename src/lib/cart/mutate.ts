@@ -130,3 +130,17 @@ export function cartSubtotal(items: CartItem[]): number {
 export function cartCurrency(items: CartItem[]): string {
   return items[0]?.currency ?? "XAF";
 }
+
+export function applyCartPriceChanges(
+  items: CartItem[],
+  changes: { product_id: string; current_price: number }[],
+): CartItem[] {
+  if (changes.length === 0) return items;
+  const byId = new Map(
+    changes.map((change) => [change.product_id, change.current_price]),
+  );
+  return items.map((item) => {
+    const nextPrice = byId.get(item.product_id);
+    return nextPrice === undefined ? item : { ...item, price: nextPrice };
+  });
+}
