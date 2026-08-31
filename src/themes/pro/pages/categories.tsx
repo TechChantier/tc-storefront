@@ -20,16 +20,30 @@ export function ProCategoryListPage() {
       ) : categories.length === 0 ? (
         <p className="mt-8 text-slate-400">No categories yet.</p>
       ) : (
-        <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+        <ul className="mt-8 divide-y divide-slate-800 border-t border-slate-800">
           {categories.map((category) => (
             <li key={category.id}>
               <Link
                 href={buildProductListHref(locale, {
                   category: category.slug,
                 })}
-                className="flex items-baseline justify-between gap-4 border border-slate-800 bg-slate-900 px-4 py-5 hover:border-slate-600"
+                className="flex items-center gap-4 py-4 hover:text-white"
               >
-                <span className="text-lg font-medium">{category.name}</span>
+                {category.image?.url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={category.image.url}
+                    alt={category.image.alt ?? category.name}
+                    className="h-16 w-16 shrink-0 object-cover"
+                  />
+                ) : (
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center bg-slate-800 text-xs uppercase tracking-wider text-slate-500">
+                    No image
+                  </div>
+                )}
+                <span className="min-w-0 flex-1 text-lg font-medium">
+                  {category.name}
+                </span>
                 <span className="text-xs uppercase tracking-wider text-slate-500">
                   {category.product_count ?? 0}
                 </span>

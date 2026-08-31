@@ -27,9 +27,21 @@ export function ClassicCategoryListPage() {
                 href={buildProductListHref(locale, {
                   category: category.slug,
                 })}
-                className="flex items-baseline justify-between gap-4 hover:underline"
+                className="flex items-center gap-4 hover:underline"
               >
-                <span className="text-lg">{category.name}</span>
+                {category.image?.url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={category.image.url}
+                    alt={category.image.alt ?? category.name}
+                    className="h-16 w-16 shrink-0 object-cover"
+                  />
+                ) : (
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center bg-stone-100 text-xs text-stone-400">
+                    No image
+                  </div>
+                )}
+                <span className="min-w-0 flex-1 text-lg">{category.name}</span>
                 <span className="text-sm text-stone-500">
                   {category.product_count ?? 0} products
                 </span>
