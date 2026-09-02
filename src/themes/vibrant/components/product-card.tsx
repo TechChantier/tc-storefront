@@ -24,7 +24,7 @@ export function ProductCard({
       className={cn(
         "group flex flex-col overflow-hidden bg-[var(--v-container-lowest)] transition-shadow duration-300 hover:shadow-[var(--v-shadow)]",
         variant === "compact" ? "bg-transparent shadow-none hover:shadow-none" : "rounded-lg",
-        featuredLayout && "sm:col-span-2",
+        featuredLayout && "w-full",
       )}
     >
       <Link href={href} className="flex min-w-0 flex-1 flex-col">
@@ -32,7 +32,7 @@ export function ProductCard({
           className={cn(
             "relative overflow-hidden bg-[var(--v-container)]",
             featuredLayout
-              ? "aspect-[16/9] lg:aspect-[4/3]"
+              ? "aspect-[4/5] sm:aspect-[4/3]"
               : "aspect-[4/5]",
             variant === "compact" && "mb-3 rounded-xl",
           )}
@@ -44,7 +44,7 @@ export function ProductCard({
             kind="product"
             className="h-full w-full transition-transform duration-700 group-hover:scale-105"
           />
-          {product.featured ? (
+          {featuredLayout ? (
             <div className="absolute top-4 right-4 rounded-full bg-[var(--v-surface)]/90 px-3 py-1 backdrop-blur">
               <span className="text-xs font-bold uppercase tracking-widest text-[var(--v-primary)]">
                 Featured

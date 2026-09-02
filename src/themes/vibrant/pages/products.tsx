@@ -9,6 +9,7 @@ import { useStorefrontStore } from "@/stores/storefront-store";
 import { Button } from "../components/button";
 import { Container } from "../components/container";
 import { EmptyState, PageHeader } from "../components/empty-state";
+import { FeaturedCarousel } from "../components/featured-carousel";
 import { FieldLabel, TextInput } from "../components/field";
 import { Icon } from "../components/icon";
 import { ProductCard } from "../components/product-card";
@@ -21,6 +22,9 @@ export function VibrantProductListPage() {
   const query = useStorefrontStore((state) => state.productsQuery);
   const status = useStorefrontStore((state) => state.productsStatus);
   const categories = useStorefrontStore((state) => state.categories);
+  const featuredProducts = useStorefrontStore(
+    (state) => state.featuredProducts,
+  );
   const formAction = `/${locale}/products`;
 
   return (
@@ -147,6 +151,10 @@ export function VibrantProductListPage() {
             }
           />
 
+          {query.featured !== true ? (
+            <FeaturedCarousel products={featuredProducts} locale={locale} />
+          ) : null}
+
           {status !== "ok" && status !== "idle" ? (
             <p className="text-[var(--v-on-variant)]">Products could not be loaded.</p>
           ) : products.length === 0 ? (
@@ -156,12 +164,11 @@ export function VibrantProductListPage() {
             />
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {products.map((product, index) => (
+              {products.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}
                   href={`/${locale}/products/${product.slug}`}
-                  variant={index === 0 ? "featured" : "standard"}
                 />
               ))}
             </div>
