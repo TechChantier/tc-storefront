@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import {
   selectCartCurrency,
   selectCartSubtotal,
@@ -13,6 +15,7 @@ function formatPrice(price: number, currency: string) {
 }
 
 export function ProCheckoutPage() {
+  const router = useRouter();
   const locale = useStorefrontStore((state) => state.locale);
   const items = useStorefrontStore((state) => state.cartItems);
   const hydrated = useStorefrontStore((state) => state.cartHydrated);
@@ -20,6 +23,12 @@ export function ProCheckoutPage() {
   const currency = useStorefrontStore(selectCartCurrency);
   const orderStatus = useStorefrontStore((state) => state.orderStatus);
   const orderResult = useStorefrontStore((state) => state.orderResult);
+
+  useEffect(() => {
+    if (orderStatus === "success" && orderResult) {
+      router.replace(`/${locale}/success`);
+    }
+  }, [orderStatus, orderResult, locale, router]);
 
   if (!hydrated) {
     return (
@@ -32,42 +41,7 @@ export function ProCheckoutPage() {
   if (orderStatus === "success" && orderResult) {
     return (
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-12">
-        <h1 className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">
-          Pro — Order placed
-        </h1>
-        <p className="mt-6 text-slate-200">
-          Reference{" "}
-          <span className="font-medium">{orderResult.public_reference}</span>
-        </p>
-        <p className="mt-1 text-xs uppercase tracking-wider text-slate-500">
-          Status: {orderResult.status}
-        </p>
-        <dl className="mt-8 space-y-2 text-sm">
-          <div className="flex justify-between">
-            <dt className="text-slate-400">Subtotal</dt>
-            <dd>{formatPrice(orderResult.subtotal, orderResult.currency)}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt className="text-slate-400">Delivery</dt>
-            <dd>
-              {formatPrice(orderResult.delivery_fee, orderResult.currency)}
-            </dd>
-          </div>
-          <div className="flex justify-between">
-            <dt className="text-slate-400">Tax</dt>
-            <dd>{formatPrice(orderResult.tax, orderResult.currency)}</dd>
-          </div>
-          <div className="flex justify-between border-t border-slate-800 pt-2 text-base">
-            <dt>Total</dt>
-            <dd>{formatPrice(orderResult.total, orderResult.currency)}</dd>
-          </div>
-        </dl>
-        <Link
-          href={`/${locale}/products`}
-          className="mt-8 w-fit bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wider text-slate-950"
-        >
-          Continue shopping
-        </Link>
+        <p className="text-slate-400">Taking you to your confirmation…</p>
       </main>
     );
   }

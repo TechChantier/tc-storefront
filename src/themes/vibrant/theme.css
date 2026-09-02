@@ -1,0 +1,43 @@
+.vibrant-theme {
+  --v-primary: #006067;
+  --v-primary-container: #007b83;
+  --v-on-primary: #ffffff;
+  --v-secondary: #ae2f34;
+  --v-bg: #fcf9f8;
+  --v-surface: #fcf9f8;
+  --v-on-bg: #1c1b1b;
+  --v-on-surface: #1c1b1b;
+  --v-on-variant: #3e494a;
+  --v-container: #f0eded;
+  --v-container-low: #f6f3f2;
+  --v-container-lowest: #ffffff;
+  --v-container-high: #eae7e7;
+  --v-outline: #6e797a;
+  --v-outline-variant: #bdc9ca;
+  --v-error: #ba1a1a;
+  --v-error-container: #ffdad6;
+  --v-shadow: 0 4px 20px rgba(0, 123, 131, 0.1);
+  --v-shadow-lg: 0 12px 40px rgba(28, 27, 27, 0.15);
+
+  background: var(--v-bg);
+  color: var(--v-on-bg);
+  font-family: var(--font-vibrant-sans), "DM Sans", ui-sans-serif, sans-serif;
+}
+
+.vibrant-theme .v-serif {
+  font-family: var(--font-vibrant-serif), "Noto Serif", ui-serif, Georgia, serif;
+}
+
+.vibrant-theme .v-no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.vibrant-theme .v-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.vibrant-theme ::selection {
+  background: #96f1fa;
+  color: #002022;
+}

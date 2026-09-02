@@ -1,6 +1,7 @@
 import "server-only";
 
 import { unstable_cache } from "next/cache";
+import { cache } from "react";
 import { env } from "@/lib/env";
 import { logEvent } from "@/lib/logger";
 import { normalizeHostname } from "@/lib/tenant/hostname";
@@ -61,7 +62,8 @@ async function fetchStorefrontConfig(
       cache: "no-store",
     });
   } catch {
-    logEvent("error", "resolver.request_failed", { hostname });
+    // Handled: console.error would open the Next.js 16 error overlay.
+    logEvent("warn", "resolver.request_failed", { hostname });
     return { status: "misconfigured" };
   }
 
@@ -103,7 +105,7 @@ async function fetchStorefrontConfig(
  * Resolve a storefront hostname through the central TCPoS API.
  * The rest of the app must not call /resolve directly.
  */
-export async function resolveStorefront(
+export const resolveStorefront = cache(async function resolveStorefront(
   hostnameInput: string,
 ): Promise<ResolveStorefrontResult> {
   const normalized = normalizeHostname(hostnameInput);
@@ -137,4 +139,4 @@ export async function resolveStorefront(
       tags: [resolveCacheTag(hostname)],
     },
   )();
-}
+});

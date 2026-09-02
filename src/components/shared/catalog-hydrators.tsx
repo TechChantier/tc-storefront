@@ -73,6 +73,28 @@ export function HydrateCategories({
   return children;
 }
 
+type HydrateFeaturedProductsProps = {
+  products: Product[];
+  status: CatalogStatus;
+  children: ReactNode;
+};
+
+export function HydrateFeaturedProducts({
+  products,
+  status,
+  children,
+}: HydrateFeaturedProductsProps) {
+  const hydrateFeaturedProducts = useStorefrontStore(
+    (state) => state.hydrateFeaturedProducts,
+  );
+
+  useLayoutEffect(() => {
+    hydrateFeaturedProducts({ products, status });
+  }, [products, status, hydrateFeaturedProducts]);
+
+  return children;
+}
+
 type HydrateProductProps = {
   product: Product | null;
   status: CatalogStatus;

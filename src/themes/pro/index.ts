@@ -9,6 +9,7 @@ import { ProHomePage } from "./pages/home";
 import { ProProductPage } from "./pages/product";
 import { ProProductListPage } from "./pages/products";
 import { ProSignupPage } from "./pages/signup";
+import { ProSuccessPage } from "./pages/success";
 
 const proTheme: StorefrontTemplate = {
   Layout: ProLayout,
@@ -21,6 +22,7 @@ const proTheme: StorefrontTemplate = {
   ProductPage: ProProductPage,
   CartPage: ProCartPage,
   CheckoutPage: ProCheckoutPage,
+  SuccessPage: ProSuccessPage,
 };
 
 export default proTheme;

@@ -9,6 +9,7 @@ import { ClassicHomePage } from "./pages/home";
 import { ClassicProductPage } from "./pages/product";
 import { ClassicProductListPage } from "./pages/products";
 import { ClassicSignupPage } from "./pages/signup";
+import { ClassicSuccessPage } from "./pages/success";
 
 const classicTheme: StorefrontTemplate = {
   Layout: ClassicLayout,
@@ -21,6 +22,7 @@ const classicTheme: StorefrontTemplate = {
   ProductPage: ClassicProductPage,
   CartPage: ClassicCartPage,
   CheckoutPage: ClassicCheckoutPage,
+  SuccessPage: ClassicSuccessPage,
 };
 
 export default classicTheme;

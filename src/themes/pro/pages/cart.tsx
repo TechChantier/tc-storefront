@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { catalogImageSrc } from "@/lib/catalog/image";
 import {
   selectCartCount,
   selectCartCurrency,
@@ -52,18 +53,12 @@ export function ProCartPage() {
           <ul className="mt-8 divide-y divide-slate-800 border border-slate-800 bg-slate-900">
             {items.map((item) => (
               <li key={item.product_id} className="flex gap-4 p-4">
-                {item.image_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={item.image_url}
-                    alt={item.name}
-                    className="h-24 w-24 object-cover"
-                  />
-                ) : (
-                  <div className="flex h-24 w-24 items-center justify-center bg-slate-800 text-xs uppercase tracking-wider text-slate-500">
-                    No image
-                  </div>
-                )}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={catalogImageSrc(item.image_url, "product")}
+                  alt={item.name}
+                  className="h-24 w-24 object-cover"
+                />
                 <div className="min-w-0 flex-1">
                   <Link
                     href={`/${locale}/products/${item.slug}`}
