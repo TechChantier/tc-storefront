@@ -8,12 +8,11 @@ import { Button } from "../components/button";
 import { CategoryCard } from "../components/category-card";
 import { Container } from "../components/container";
 import { Icon } from "../components/icon";
-import { Missing, MissingImage } from "../components/missing";
 import { ProductCard } from "../components/product-card";
+import { vibrantCopy, vibrantImages } from "../content";
 
 export function VibrantHomePage() {
   const locale = useStorefrontStore((state) => state.locale);
-  const branding = useStorefrontStore((state) => state.config.branding);
   const sections = useStorefrontStore((state) => state.config.sections);
   const categories = useStorefrontStore((state) => state.categories);
   const featuredProducts = useStorefrontStore(
@@ -30,22 +29,21 @@ export function VibrantHomePage() {
     <main>
       {sections.hero !== false ? (
         <section className="relative h-[80vh] w-full overflow-hidden bg-[var(--v-container)] md:h-[90vh]">
-          <MissingImage
-            label="Hero image"
-            className="absolute inset-0 h-full w-full"
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={vibrantImages.hero}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--v-bg)] via-[var(--v-bg)]/20 to-transparent" />
           <Container className="relative z-10 flex h-full flex-col justify-end pb-24">
             <div className="max-w-2xl">
               <h1 className="v-serif mb-3 text-4xl font-semibold tracking-tight text-[var(--v-on-bg)] md:text-5xl">
-                {branding.business_name}
+                {vibrantCopy.heroHeadline}
               </h1>
-              <Missing
-                as="p"
-                className="mb-6 max-w-xl text-lg text-[var(--v-on-variant)]"
-              >
-                Hero tagline
-              </Missing>
+              <p className="mb-6 max-w-xl text-lg text-[var(--v-on-variant)]">
+                {vibrantCopy.heroTagline}
+              </p>
               <Link href={`/${locale}/products`}>
                 <Button pill className="px-8 py-4">
                   Shop the Collection
@@ -83,9 +81,7 @@ export function VibrantHomePage() {
               </div>
             </div>
             {categories.length === 0 ? (
-              <Missing as="p" className="text-[var(--v-on-variant)]">
-                Categories
-              </Missing>
+              <p className="text-[var(--v-on-variant)]">No categories yet.</p>
             ) : (
               <div
                 ref={sliderRef}
@@ -116,9 +112,9 @@ export function VibrantHomePage() {
               <h2 className="v-serif mb-1 text-[28px] font-semibold md:text-[32px]">
                 Featured Arrivals
               </h2>
-              <Missing as="p" className="text-base text-[var(--v-on-variant)]">
-                Featured collection subtitle
-              </Missing>
+              <p className="text-base text-[var(--v-on-variant)]">
+                {vibrantCopy.featuredSubtitle}
+              </p>
             </div>
             {featuredStatus !== "ok" && featuredStatus !== "idle" ? (
               <p className="text-center text-[var(--v-on-variant)]">
@@ -157,18 +153,12 @@ export function VibrantHomePage() {
             name="leaf"
             className="mx-auto mb-3 h-12 w-12 text-[var(--v-primary)]"
           />
-          <Missing
-            as="h2"
-            className="v-serif mb-6 text-4xl font-semibold tracking-tight md:text-5xl"
-          >
-            Ethically sourced marketing headline
-          </Missing>
-          <Missing
-            as="p"
-            className="mx-auto max-w-2xl text-lg leading-relaxed text-[var(--v-on-variant)]"
-          >
-            Brand story / marketing copy
-          </Missing>
+          <h2 className="v-serif mb-6 text-4xl font-semibold tracking-tight md:text-5xl">
+            {vibrantCopy.ethicsHeadline}
+          </h2>
+          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-[var(--v-on-variant)]">
+            {vibrantCopy.ethicsBody}
+          </p>
         </Container>
       </section>
     </main>

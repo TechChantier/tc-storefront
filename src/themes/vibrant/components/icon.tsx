@@ -20,6 +20,9 @@ const paths = {
     "M12 20s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 8a3.8 3.8 0 0 1 7 2.8C19 15.6 12 20 12 20Z",
   card: "M3 7h18v10H3V7Zm0 3h18",
   info: "M12 17v-6M12 7h.01M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18Z",
+  check: "M5 13l4 4L19 7",
+  calendar: "M8 3v3M16 3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z",
+  chat: "M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z",
 } as const;
 
 export type IconName = keyof typeof paths;

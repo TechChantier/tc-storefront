@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import {
   selectCartCurrency,
   selectCartSubtotal,
@@ -10,11 +12,12 @@ import { VibrantCheckoutForm } from "../checkout-form";
 import { Button } from "../components/button";
 import { Container } from "../components/container";
 import { Media } from "../components/media";
-import { Missing } from "../components/missing";
 import { PageHeader } from "../components/empty-state";
 import { formatPrice } from "../lib/format";
+import { vibrantCopy } from "../content";
 
 export function VibrantCheckoutPage() {
+  const router = useRouter();
   const locale = useStorefrontStore((state) => state.locale);
   const items = useStorefrontStore((state) => state.cartItems);
   const hydrated = useStorefrontStore((state) => state.cartHydrated);
@@ -22,6 +25,12 @@ export function VibrantCheckoutPage() {
   const currency = useStorefrontStore(selectCartCurrency);
   const orderStatus = useStorefrontStore((state) => state.orderStatus);
   const orderResult = useStorefrontStore((state) => state.orderResult);
+
+  useEffect(() => {
+    if (orderStatus === "success" && orderResult) {
+      router.replace(`/${locale}/success`);
+    }
+  }, [orderStatus, orderResult, locale, router]);
 
   if (!hydrated) {
     return (
@@ -37,37 +46,9 @@ export function VibrantCheckoutPage() {
     return (
       <main>
         <Container className="py-12">
-          <PageHeader title="Order placed" />
-          <p className="text-lg">
-            Reference{" "}
-            <span className="font-medium">{orderResult.public_reference}</span>
+          <p className="text-[var(--v-on-variant)]">
+            Taking you to your confirmation…
           </p>
-          <p className="mt-1 text-sm text-[var(--v-on-variant)]">
-            Status: {orderResult.status}
-          </p>
-          <dl className="mt-8 max-w-md space-y-2 text-sm">
-            <div className="flex justify-between">
-              <dt>Subtotal</dt>
-              <dd>{formatPrice(orderResult.subtotal, orderResult.currency)}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt>Delivery</dt>
-              <dd>
-                {formatPrice(orderResult.delivery_fee, orderResult.currency)}
-              </dd>
-            </div>
-            <div className="flex justify-between">
-              <dt>Tax</dt>
-              <dd>{formatPrice(orderResult.tax, orderResult.currency)}</dd>
-            </div>
-            <div className="flex justify-between border-t border-[var(--v-outline-variant)] pt-2 text-base">
-              <dt>Total</dt>
-              <dd>{formatPrice(orderResult.total, orderResult.currency)}</dd>
-            </div>
-          </dl>
-          <Link href={`/${locale}/products`} className="mt-8 inline-block">
-            <Button variant="outline">Continue shopping</Button>
-          </Link>
         </Container>
       </main>
     );
@@ -142,11 +123,11 @@ export function VibrantCheckoutPage() {
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <Missing className="text-sm">Shipping</Missing>
+                  <span>{vibrantCopy.checkoutShipping}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Taxes</span>
-                  <Missing className="text-sm">Tax</Missing>
+                  <span>{vibrantCopy.checkoutTax}</span>
                 </div>
                 <div className="mt-2 flex justify-between border-t border-[var(--v-outline-variant)]/40 pt-2 text-[28px] font-semibold text-[var(--v-primary)]">
                   <span className="v-serif">Total</span>

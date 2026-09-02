@@ -5,6 +5,7 @@ import type { Product } from "@/lib/catalog/types";
 import { formatPrice } from "../lib/format";
 import { cn } from "../lib/cn";
 import { Media } from "./media";
+import { UnavailableTag } from "./unavailable-tag";
 
 type ProductCardVariant = "standard" | "featured" | "compact";
 
@@ -44,7 +45,8 @@ export function ProductCard({
             kind="product"
             className="h-full w-full transition-transform duration-700 group-hover:scale-105"
           />
-          {featuredLayout ? (
+          {product.available ? null : <UnavailableTag />}
+          {featuredLayout && product.available ? (
             <div className="absolute top-4 right-4 rounded-full bg-[var(--v-surface)]/90 px-3 py-1 backdrop-blur">
               <span className="text-xs font-bold uppercase tracking-widest text-[var(--v-primary)]">
                 Featured

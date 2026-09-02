@@ -9,6 +9,7 @@ import { VibrantHomePage } from "./pages/home";
 import { VibrantProductPage } from "./pages/product";
 import { VibrantProductListPage } from "./pages/products";
 import { VibrantSignupPage } from "./pages/signup";
+import { VibrantSuccessPage } from "./pages/success";
 
 const vibrantTheme: StorefrontTemplate = {
   Layout: VibrantLayout,
@@ -21,6 +22,7 @@ const vibrantTheme: StorefrontTemplate = {
   ProductPage: VibrantProductPage,
   CartPage: VibrantCartPage,
   CheckoutPage: VibrantCheckoutPage,
+  SuccessPage: VibrantSuccessPage,
 };
 
 export default vibrantTheme;

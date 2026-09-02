@@ -11,9 +11,9 @@ import { VibrantCartLineControls } from "../cart-controls";
 import { Button } from "../components/button";
 import { Container } from "../components/container";
 import { Media } from "../components/media";
-import { Missing } from "../components/missing";
 import { PageHeader } from "../components/empty-state";
 import { formatPrice } from "../lib/format";
+import { vibrantCopy } from "../content";
 
 export function VibrantCartPage() {
   const locale = useStorefrontStore((state) => state.locale);
@@ -75,12 +75,6 @@ export function VibrantCartPage() {
                         >
                           {item.name}
                         </Link>
-                        <Missing
-                          as="p"
-                          className="mt-1 text-sm text-[var(--v-on-variant)]"
-                        >
-                          Variant
-                        </Missing>
                       </div>
                     </div>
                     <div className="mt-3 flex items-center justify-between">
@@ -108,9 +102,9 @@ export function VibrantCartPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[var(--v-on-variant)]">Shipping</span>
-                    <Missing className="text-sm text-[var(--v-on-variant)]">
-                      Calculated at next step
-                    </Missing>
+                    <span className="font-medium text-[var(--v-on-variant)]">
+                      {vibrantCopy.cartShipping}
+                    </span>
                   </div>
                 </div>
                 <div className="mb-6 flex items-center justify-between">

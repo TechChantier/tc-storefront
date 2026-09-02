@@ -9,6 +9,7 @@ import { Container } from "../components/container";
 import { Media } from "../components/media";
 import { Missing } from "../components/missing";
 import { QuantityStepper } from "../components/quantity-stepper";
+import { UnavailableTag } from "../components/unavailable-tag";
 import { formatPrice } from "../lib/format";
 
 export function VibrantProductPage() {
@@ -51,7 +52,7 @@ export function VibrantProductPage() {
       <Container className="py-8 md:py-12">
         <section className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-12">
           <div className="flex flex-col gap-2 md:col-span-7">
-            <div className="h-[480px] overflow-hidden rounded-xl bg-white shadow-sm md:h-[800px]">
+            <div className="relative h-[480px] overflow-hidden rounded-xl bg-white shadow-sm md:h-[800px]">
               <Media
                 src={images[0]?.url}
                 alt={images[0]?.alt ?? product.name}
@@ -59,6 +60,7 @@ export function VibrantProductPage() {
                 kind="product"
                 className="h-full w-full"
               />
+              {product.available ? null : <UnavailableTag />}
             </div>
             {images.length > 1 ? (
               <div className="grid grid-cols-4 gap-2">
@@ -130,23 +132,11 @@ export function VibrantProductPage() {
                 />
               </div>
               <VibrantAddToCartButton product={product} quantity={quantity} />
-              <Button variant="outline" pill className="w-full py-4" disabled>
-                *** Add to Wishlist ***
+              <Button type="button" variant="outline" pill className="w-full py-4">
+                Add to Wishlist
               </Button>
             </div>
           </div>
-        </section>
-
-        <section className="mt-12 pt-6">
-          <h2 className="v-serif mb-6 text-center text-[28px] font-semibold md:text-[32px]">
-            You might also like
-          </h2>
-          <Missing
-            as="p"
-            className="text-center text-base text-[var(--v-on-variant)]"
-          >
-            Related products are not loaded on this page
-          </Missing>
         </section>
       </Container>
     </main>

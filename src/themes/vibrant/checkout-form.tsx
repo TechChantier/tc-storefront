@@ -7,9 +7,9 @@ import {
   useStorefrontStore,
 } from "@/stores/storefront-store";
 import { Button } from "./components/button";
-import { FieldError, FieldLabel, TextArea, TextInput } from "./components/field";
+import { FieldError, FieldLabel, SelectInput, TextArea, TextInput } from "./components/field";
 import { Icon } from "./components/icon";
-import { Missing } from "./components/missing";
+import { vibrantCopy } from "./content";
 
 function StoreFieldError({ field }: { field: string }) {
   const message = useStorefrontStore((state) =>
@@ -139,16 +139,20 @@ export function VibrantCheckoutForm() {
             <StoreFieldError field="address" />
           </div>
           <div>
-            <FieldLabel>State</FieldLabel>
-            <Missing className="block text-sm text-[var(--v-on-variant)]">
-              State is not in checkout
-            </Missing>
+            <FieldLabel htmlFor="vibrant-state">State</FieldLabel>
+            <SelectInput id="vibrant-state" defaultValue="NY" autoComplete="address-level1">
+              <option value="NY">NY</option>
+              <option value="CA">CA</option>
+              <option value="TX">TX</option>
+            </SelectInput>
           </div>
           <div>
-            <FieldLabel>Zip Code</FieldLabel>
-            <Missing className="block text-sm text-[var(--v-on-variant)]">
-              Zip code is not in checkout
-            </Missing>
+            <FieldLabel htmlFor="vibrant-zip">Zip Code</FieldLabel>
+            <TextInput
+              id="vibrant-zip"
+              autoComplete="postal-code"
+              placeholder="10012"
+            />
           </div>
         </div>
 
@@ -221,9 +225,61 @@ export function VibrantCheckoutForm() {
       </Section>
 
       <Section icon="card" title="Payment Method">
-        <Missing className="block text-base text-[var(--v-on-variant)]">
-          Card payment fields are not collected on this storefront
-        </Missing>
+        <div className="mb-4 rounded border border-[var(--v-outline-variant)]/60 bg-[var(--v-surface)] p-4">
+          <div className="flex flex-col gap-4">
+            <div>
+              <FieldLabel htmlFor="vibrant-cc-num">Card Number</FieldLabel>
+              <div className="relative">
+                <TextInput
+                  id="vibrant-cc-num"
+                  className="pl-10 font-mono"
+                  placeholder="0000 0000 0000 0000"
+                  autoComplete="off"
+                  inputMode="numeric"
+                />
+                <Icon
+                  name="card"
+                  className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-[var(--v-outline)]"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <FieldLabel htmlFor="vibrant-cc-exp">Expiration (MM/YY)</FieldLabel>
+                <TextInput
+                  id="vibrant-cc-exp"
+                  className="font-mono"
+                  placeholder="MM/YY"
+                  autoComplete="off"
+                />
+              </div>
+              <div>
+                <FieldLabel htmlFor="vibrant-cc-cvc">CVC</FieldLabel>
+                <div className="relative">
+                  <TextInput
+                    id="vibrant-cc-cvc"
+                    className="font-mono"
+                    placeholder="123"
+                    autoComplete="off"
+                    inputMode="numeric"
+                  />
+                  <Icon
+                    name="info"
+                    className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--v-outline)]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <label className="flex items-center gap-3 text-base text-[var(--v-on-variant)]">
+          <input
+            type="checkbox"
+            defaultChecked
+            className="h-5 w-5 rounded border-[var(--v-outline-variant)] text-[var(--v-primary)]"
+          />
+          Billing address is same as shipping address
+        </label>
       </Section>
 
       {orderError ? (
@@ -264,6 +320,9 @@ export function VibrantCheckoutForm() {
         <Icon name="lock" className="h-[18px] w-[18px]" />
         {submitting ? "Placing order…" : "Place Order"}
       </Button>
+      <p className="text-center text-xs font-bold uppercase tracking-widest text-[var(--v-outline)]">
+        {vibrantCopy.secureCheckout}
+      </p>
     </form>
   );
 }

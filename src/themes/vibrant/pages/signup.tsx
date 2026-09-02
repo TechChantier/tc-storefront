@@ -4,7 +4,6 @@ import { useStorefrontStore } from "@/stores/storefront-store";
 import { Button } from "../components/button";
 import { Container } from "../components/container";
 import { FieldLabel, TextInput } from "../components/field";
-import { Missing } from "../components/missing";
 import { PageHeader } from "../components/empty-state";
 
 export function VibrantSignupPage() {
@@ -23,9 +22,6 @@ export function VibrantSignupPage() {
           className="mx-auto max-w-md space-y-4 rounded-xl bg-[var(--v-container-lowest)] p-6 shadow-[var(--v-shadow)]"
           onSubmit={(event) => event.preventDefault()}
         >
-          <Missing as="p" className="text-sm text-[var(--v-on-variant)]">
-            Signup is not connected
-          </Missing>
           <div>
             <FieldLabel htmlFor="vibrant-signup-email">Email</FieldLabel>
             <TextInput id="vibrant-signup-email" type="email" />
@@ -34,7 +30,7 @@ export function VibrantSignupPage() {
             <FieldLabel htmlFor="vibrant-signup-password">Password</FieldLabel>
             <TextInput id="vibrant-signup-password" type="password" />
           </div>
-          <Button type="submit" className="w-full" disabled>
+          <Button type="submit" className="w-full">
             Create account
           </Button>
         </form>

@@ -11,7 +11,7 @@ import { Button } from "./button";
 import { Container } from "./container";
 import { Icon } from "./icon";
 import { Media } from "./media";
-import { Missing } from "./missing";
+import { vibrantCopy } from "../content";
 
 function NavLink({
   href,
@@ -161,7 +161,7 @@ export function Footer() {
             {branding.business_name}
           </span>
           <p className="mt-3 max-w-sm text-base text-[var(--v-on-variant)]">
-            <Missing>Store tagline</Missing>
+            {vibrantCopy.footerTagline}
           </p>
         </div>
         <div className="flex flex-col gap-2">
@@ -197,12 +197,18 @@ export function Footer() {
           >
             Contact Support
           </Link>
-          <Missing className="text-base text-[var(--v-on-variant)]">
+          <a
+            href="#privacy"
+            className="text-base text-[var(--v-on-variant)] underline hover:text-[var(--v-primary)]"
+          >
             Privacy Policy
-          </Missing>
-          <Missing className="text-base text-[var(--v-on-variant)]">
+          </a>
+          <a
+            href="#terms"
+            className="text-base text-[var(--v-on-variant)] underline hover:text-[var(--v-primary)]"
+          >
             Terms of Service
-          </Missing>
+          </a>
         </div>
         <div className="border-t border-[var(--v-outline-variant)]/30 pt-4 md:col-span-4">
           <p className="text-sm text-[var(--v-on-variant)]">

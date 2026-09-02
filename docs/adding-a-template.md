@@ -108,7 +108,7 @@ Cart is persisted per `config.tcpos_subdomain`. Do not persist it yourself.
 | `placeOrder()` | Builds items + `displayed_price` + `idempotency_key`; POSTs via a server action |
 | `confirmUpdatedPrices()` | After `ORDER_REQUIRES_CONFIRMATION` |
 | `orderStatus` | `idle` \| `submitting` \| `success` \| `error` |
-| `orderResult` | `public_reference`, `subtotal`, `delivery_fee`, `tax`, `total`, `status` |
+| `orderResult` | `public_reference`, `subtotal`, `delivery_fee`, `tax`, `total`, `status` — shown on `SuccessPage` |
 | `orderError` | `message`, `fields`, `priceChanges`, `stockItems` |
 | `selectCanPlaceOrder` | Cart non-empty, ≤ 50 lines, not submitting/success |
 
@@ -133,7 +133,8 @@ Never send from the theme: `variant_id`, `final_total`, `final_price`, `tenant_i
 | `ProductListPage` | `/{locale}/products` | `products` + filters |
 | `ProductPage` | `/{locale}/products/{slug}` | `product` + add to cart |
 | `CartPage` | `/{locale}/cart` | editable cart |
-| `CheckoutPage` | `/{locale}/checkout` | read-only lines + form + `placeOrder` |
+| `CheckoutPage` | `/{locale}/checkout` | read-only lines + form + `placeOrder` (then navigate to success) |
+| `SuccessPage` | `/{locale}/success` | `orderResult`, `checkoutForm`, business WhatsApp |
 
 Locale-less `/about`, `/cart`, … already redirect to `/{default_locale}/…`. You do not add those files per theme.
 
@@ -165,6 +166,7 @@ src/themes/bold/
     product.tsx
     cart.tsx
     checkout.tsx
+    success.tsx
 ```
 
 All of these are `"use client"`.
@@ -187,6 +189,7 @@ const boldTheme: StorefrontTemplate = {
   ProductPage: BoldProductPage,
   CartPage: BoldCartPage,
   CheckoutPage: BoldCheckoutPage,
+  SuccessPage: BoldSuccessPage,
 };
 
 export default boldTheme;
@@ -229,6 +232,7 @@ Use `state.locale` in hrefs:
 | Categories | `/${locale}/categories` |
 | Cart | `/${locale}/cart` (badge: `selectCartCount`) |
 | Checkout | `/${locale}/checkout` |
+| Success | `/${locale}/success` |
 | About / Contact / Signup | `/${locale}/about` … |
 
 Product detail: `/${locale}/products/${product.slug}`.  
@@ -242,7 +246,8 @@ Category → products: `buildProductListHref(locale, { category: category.slug }
 - **Product detail:** handle `productStatus !== "ok"`. Respect stock (`remainingCapacity`).
 - **Categories:** list from `categories`; image is `category.image?.url`.
 - **Cart:** wait for `cartHydrated`; qty controls; link to checkout.
-- **Checkout:** read-only lines; “Edit cart”; pickup hides delivery address; success shows `orderResult.public_reference` and **API** totals (not the cart subtotal). Empty cart → browse products. Price mismatch → `confirmUpdatedPrices`.
+- **Checkout:** read-only lines; “Edit cart”; pickup hides delivery address. After `placeOrder` succeeds, navigate to `/{locale}/success` (do not keep confirmation inline). Empty cart → browse products. Price mismatch → `confirmUpdatedPrices`.
+- **Success:** thank-you hero, order ID, Customer / Delivery / Timeline cards, WhatsApp share + continue shopping. Use `orderResult` + `checkoutForm`. If there is no successful order in the store, send the shopper to products. Mark missing API fields with `*** … ***` (empty email, no WhatsApp number, missing delivery address). Theme dummy is allowed for copy the API does not own (e.g. estimated arrival).
 
 ---
 

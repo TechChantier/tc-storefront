@@ -96,9 +96,6 @@ export function VibrantContactPage() {
               className="space-y-6 rounded-2xl border border-[var(--v-container)]/50 bg-[var(--v-container-lowest)]/80 p-4 backdrop-blur-xl md:p-6"
               onSubmit={(event) => event.preventDefault()}
             >
-              <Missing as="p" className="text-sm text-[var(--v-on-variant)]">
-                Contact form is not connected
-              </Missing>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
                   <FieldLabel htmlFor="vibrant-contact-name">Name</FieldLabel>
@@ -141,7 +138,7 @@ export function VibrantContactPage() {
                   placeholder="How can we help you?"
                 />
               </div>
-              <Button type="submit" pill disabled>
+              <Button type="submit" pill>
                 Send Message
                 <Icon name="arrowRight" className="h-[18px] w-[18px]" />
               </Button>
