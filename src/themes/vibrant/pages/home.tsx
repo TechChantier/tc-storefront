@@ -16,11 +16,11 @@ export function VibrantHomePage() {
   const branding = useStorefrontStore((state) => state.config.branding);
   const sections = useStorefrontStore((state) => state.config.sections);
   const categories = useStorefrontStore((state) => state.categories);
-  const products = useStorefrontStore((state) => state.products);
+  const featuredProducts = useStorefrontStore(
+    (state) => state.featuredProducts,
+  );
+  const featuredStatus = useStorefrontStore((state) => state.featuredStatus);
   const sliderRef = useRef<HTMLDivElement>(null);
-
-  const featured = products.filter((product) => product.featured);
-  const arrivals = featured.length > 0 ? featured : products.slice(0, 8);
 
   const scrollCategories = (direction: -1 | 1) => {
     sliderRef.current?.scrollBy({ left: direction * 300, behavior: "smooth" });
@@ -120,13 +120,17 @@ export function VibrantHomePage() {
                 Featured collection subtitle
               </Missing>
             </div>
-            {arrivals.length === 0 ? (
-              <Missing as="p" className="text-center text-[var(--v-on-variant)]">
-                Featured products
-              </Missing>
+            {featuredStatus !== "ok" && featuredStatus !== "idle" ? (
+              <p className="text-center text-[var(--v-on-variant)]">
+                Featured products could not be loaded.
+              </p>
+            ) : featuredProducts.length === 0 ? (
+              <p className="text-center text-[var(--v-on-variant)]">
+                No featured products yet.
+              </p>
             ) : (
               <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-                {arrivals.slice(0, 8).map((product) => (
+                {featuredProducts.map((product) => (
                   <ProductCard
                     key={product.id}
                     product={product}

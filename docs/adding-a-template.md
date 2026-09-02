@@ -75,6 +75,7 @@ Branding colors (`primary_color`, `secondary_color`) are on `config.branding` bu
 | `product`, `productStatus` | Product detail |
 | `categories`, `categoriesStatus` | Category list (and product filters) |
 | `category`, `categoryStatus` | Category detail (metadata only) |
+| `featuredProducts`, `featuredStatus` | Home featured section (`featured=true` from the API) |
 
 Statuses: `idle` \| `ok` \| `not_found` \| `unavailable` \| `invalid` \| `invalid_locale` \| `redirect`. Treat anything other than `ok` / `idle` as a load failure in the UI.
 
@@ -124,7 +125,7 @@ Never send from the theme: `variant_id`, `final_total`, `final_price`, `tenant_i
 | Key | Public URL | Store data |
 |---|---|---|
 | `Layout` | all `/{locale}/*` | nav, branding, cart count |
-| `HomePage` | `/{locale}` | config, locale |
+| `HomePage` | `/{locale}` | config, locale, `featuredProducts`, `categories` |
 | `AboutPage` | `/{locale}/about` | config, locale |
 | `ContactPage` | `/{locale}/contact` | config, locale |
 | `SignupPage` | `/{locale}/signup` | config, locale |

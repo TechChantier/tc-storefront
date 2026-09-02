@@ -75,6 +75,9 @@ export type StorefrontState = {
   category: Category | null;
   categoryStatus: CatalogStatus;
 
+  featuredProducts: Product[];
+  featuredStatus: CatalogStatus;
+
   cartItems: CartItem[];
   cartError: CartErrorCode | null;
   cartErrorProductId: string | null;
@@ -96,6 +99,10 @@ export type StorefrontState = {
   }) => void;
   hydrateCategory: (payload: {
     category: Category | null;
+    status: CatalogStatus;
+  }) => void;
+  hydrateFeaturedProducts: (payload: {
+    products: Product[];
     status: CatalogStatus;
   }) => void;
   setProductsQuery: (query: ProductQuery) => void;
@@ -149,6 +156,8 @@ function emptyCatalog() {
     categoriesStatus: "idle" as CatalogStatus,
     category: null as Category | null,
     categoryStatus: "idle" as CatalogStatus,
+    featuredProducts: [] as Product[],
+    featuredStatus: "idle" as CatalogStatus,
   };
 }
 
@@ -159,6 +168,10 @@ function resolveStockSource(
   if (state.product?.id === productId) return state.product;
   const listed = state.products.find((product) => product.id === productId);
   if (listed) return listed;
+  const featured = state.featuredProducts.find(
+    (product) => product.id === productId,
+  );
+  if (featured) return featured;
   const item = state.cartItems.find((entry) => entry.product_id === productId);
   return item ? cartItemToStockSource(item) : undefined;
 }
@@ -395,6 +408,9 @@ export function createStorefrontStore(
 
       hydrateCategory: ({ category, status }) =>
         set({ category, categoryStatus: status }),
+
+      hydrateFeaturedProducts: ({ products, status }) =>
+        set({ featuredProducts: products, featuredStatus: status }),
 
       setProductsQuery: (query) => set({ productsQuery: query }),
 

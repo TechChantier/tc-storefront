@@ -1,5 +1,8 @@
 import { notFound } from "next/navigation";
-import { HydrateProducts } from "@/components/shared/catalog-hydrators";
+import {
+  HydrateCategories,
+  HydrateFeaturedProducts,
+} from "@/components/shared/catalog-hydrators";
 import { StorefrontErrorView } from "@/components/shared/storefront-error-view";
 import { getCategories } from "@/lib/catalog/get-categories";
 import { getProducts } from "@/lib/catalog/get-products";
@@ -23,12 +26,17 @@ export default async function StorefrontHomePage({ params }: PageProps) {
     return <StorefrontErrorView result={loaded.result} />;
   }
 
-  const query = { ...DEFAULT_PRODUCT_QUERY, locale, per_page: 8 };
+  const featuredQuery = {
+    ...DEFAULT_PRODUCT_QUERY,
+    locale,
+    per_page: 8,
+    featured: true,
+  };
 
-  const [productsResult, categoriesResult] = await Promise.all([
+  const [featuredResult, categoriesResult] = await Promise.all([
     getProducts({
       tcposSubdomain: loaded.config.tcpos_subdomain,
-      query,
+      query: featuredQuery,
     }),
     getCategories({
       tcposSubdomain: loaded.config.tcpos_subdomain,
@@ -36,15 +44,14 @@ export default async function StorefrontHomePage({ params }: PageProps) {
     }),
   ]);
 
-  if (productsResult.status === "invalid_locale") {
+  if (featuredResult.status === "invalid_locale") {
     notFound();
   }
 
-  const productsStatus: CatalogStatus =
-    productsResult.status === "ok" ? "ok" : productsResult.status;
-  const products =
-    productsResult.status === "ok" ? productsResult.products : [];
-  const meta = productsResult.status === "ok" ? productsResult.meta : null;
+  const featuredStatus: CatalogStatus =
+    featuredResult.status === "ok" ? "ok" : featuredResult.status;
+  const featuredProducts =
+    featuredResult.status === "ok" ? featuredResult.products : [];
 
   const categoriesStatus: CatalogStatus =
     categoriesResult.status === "ok"
@@ -58,15 +65,13 @@ export default async function StorefrontHomePage({ params }: PageProps) {
   const { HomePage } = loaded.theme;
 
   return (
-    <HydrateProducts
-      products={products}
-      meta={meta}
-      query={query}
-      status={productsStatus}
-      categories={categories}
-      categoriesStatus={categoriesStatus}
-    >
-      <HomePage />
-    </HydrateProducts>
+    <HydrateCategories categories={categories} status={categoriesStatus}>
+      <HydrateFeaturedProducts
+        products={featuredProducts}
+        status={featuredStatus}
+      >
+        <HomePage />
+      </HydrateFeaturedProducts>
+    </HydrateCategories>
   );
 }
