@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { isLocaleSupportedByTenant } from "@/lib/localization/locale";
 import { decodeHostnameParam } from "@/lib/tenant/hostname";
 import { getTheme, isRegisteredTemplateKey } from "@/themes/registry";
@@ -31,7 +32,7 @@ export type LoadReadyStorefrontResult =
   | { kind: "error"; result: Exclude<StorefrontLoadResult, { kind: "ready" }> }
   | { kind: "invalid_locale" };
 
-export async function loadStorefront(
+export const loadStorefront = cache(async function loadStorefront(
   hostnameParam: string,
 ): Promise<StorefrontLoadResult> {
   const decoded = decodeHostnameParam(hostnameParam);
@@ -62,9 +63,9 @@ export async function loadStorefront(
       };
     }
   }
-}
+});
 
-export async function loadReadyStorefront(
+export const loadReadyStorefront = cache(async function loadReadyStorefront(
   hostnameParam: string,
   localeParam: string,
 ): Promise<LoadReadyStorefrontResult> {
@@ -92,4 +93,4 @@ export async function loadReadyStorefront(
     locale: localeParam,
     theme,
   };
-}
+});
