@@ -1,0 +1,2 @@
+echo "pre-push: running npm run build"
+npm run build
