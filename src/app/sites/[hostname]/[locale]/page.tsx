@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import {
   HydrateCategories,
   HydrateFeaturedProducts,
@@ -7,12 +8,18 @@ import { StorefrontErrorView } from "@/components/shared/storefront-error-view";
 import { getCategories } from "@/lib/catalog/get-categories";
 import { getProducts } from "@/lib/catalog/get-products";
 import { DEFAULT_PRODUCT_QUERY } from "@/lib/catalog/product-query";
+import { storefrontPageMetadata } from "@/lib/seo/page-metadata";
 import { loadReadyStorefront } from "@/lib/storefront/load-storefront";
 import type { CatalogStatus } from "@/stores/storefront-store";
 
 type PageProps = {
   params: Promise<{ hostname: string; locale: string }>;
 };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { hostname, locale } = await params;
+  return storefrontPageMetadata({ hostname, locale, pageName: "Home" });
+}
 
 export default async function StorefrontHomePage({ params }: PageProps) {
   const { hostname, locale } = await params;

@@ -13,8 +13,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TC Market",
+  title: {
+    default: "TC Market",
+  },
   description: "TC Market storefront",
+  icons: {
+    icon: "/ico.png",
+    apple: "/ico.png",
+  },
 };
 
 export default function RootLayout({

@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { StorefrontErrorView } from "@/components/shared/storefront-error-view";
+import {
+  defaultBrandImage,
+  fallbackStorefrontMetadata,
+  publicOrigin,
+  shopDescription,
+} from "@/lib/seo/page-metadata";
 import { loadReadyStorefront } from "@/lib/storefront/load-storefront";
 import { StorefrontProvider } from "@/stores/storefront-provider";
 
@@ -18,15 +24,42 @@ export async function generateMetadata({
   const loaded = await loadReadyStorefront(hostname, locale);
 
   if (loaded.kind !== "ready") {
-    return { robots: { index: false, follow: false }, title: "Storefront" };
+    return fallbackStorefrontMetadata();
   }
 
   const { config } = loaded;
+  const tenant = config.branding.business_name;
+  const origin = publicOrigin(config);
+  const description = shopDescription(config, locale) ?? tenant;
+  const brandImage = defaultBrandImage(config);
+
   return {
-    title: config.branding.business_name,
+    metadataBase: new URL(origin),
+    title: {
+      default: `Home | ${tenant}`,
+      template: `%s | ${tenant}`,
+    },
+    description,
     robots: config.seo.indexing_enabled
       ? undefined
       : { index: false, follow: false },
+    icons: {
+      icon: [{ url: brandImage }],
+      apple: [{ url: brandImage }],
+    },
+    openGraph: {
+      type: "website",
+      siteName: tenant,
+      images: [
+        {
+          url: brandImage,
+          alt: tenant,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+    },
   };
 }
 

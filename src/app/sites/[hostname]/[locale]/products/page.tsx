@@ -1,15 +1,22 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import {
   HydrateFeaturedProducts,
   HydrateProducts,
 } from "@/components/shared/catalog-hydrators";
 import { StorefrontErrorView } from "@/components/shared/storefront-error-view";
 import { getCategories } from "@/lib/catalog/get-categories";
+import { getCategory } from "@/lib/catalog/get-category";
 import { getProducts } from "@/lib/catalog/get-products";
 import {
   DEFAULT_PRODUCT_QUERY,
   parseProductQuery,
 } from "@/lib/catalog/product-query";
+import {
+  buildStorefrontMetadata,
+  fallbackStorefrontMetadata,
+  storefrontPath,
+} from "@/lib/seo/page-metadata";
 import { loadReadyStorefront } from "@/lib/storefront/load-storefront";
 import type { CatalogStatus } from "@/stores/storefront-store";
 
@@ -17,6 +24,55 @@ type PageProps = {
   params: Promise<{ hostname: string; locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
+
+export async function generateMetadata({
+  params,
+  searchParams,
+}: PageProps): Promise<Metadata> {
+  const { hostname, locale } = await params;
+  const loaded = await loadReadyStorefront(hostname, locale);
+  if (loaded.kind !== "ready") {
+    return fallbackStorefrontMetadata();
+  }
+
+  const query = parseProductQuery(await searchParams);
+  if (!query.category) {
+    return buildStorefrontMetadata({
+      config: loaded.config,
+      locale,
+      pageName: "Products",
+      pathname: storefrontPath(locale, "/products"),
+    });
+  }
+
+  const categoryResult = await getCategory({
+    tcposSubdomain: loaded.config.tcpos_subdomain,
+    slug: query.category,
+    locale,
+  });
+
+  if (categoryResult.status !== "ok") {
+    return buildStorefrontMetadata({
+      config: loaded.config,
+      locale,
+      pageName: "Products",
+      pathname: storefrontPath(locale, "/products"),
+    });
+  }
+
+  const category = categoryResult.category;
+  return buildStorefrontMetadata({
+    config: loaded.config,
+    locale,
+    pageName: category.seo?.title?.trim() || category.name,
+    description:
+      category.seo?.description?.trim() || category.description || undefined,
+    imageUrl: category.image?.url,
+    imageAlt: category.image?.alt || category.name,
+    pathname: storefrontPath(locale, "/products"),
+    search: `?category=${encodeURIComponent(category.slug)}`,
+  });
+}
 
 export default async function StorefrontProductsPage({
   params,
