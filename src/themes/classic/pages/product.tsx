@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { catalogImageSrc } from "@/lib/catalog/image";
 import { useStorefrontStore } from "@/stores/storefront-store";
 import { ClassicAddToCartButton } from "../cart-controls";
 
@@ -29,7 +30,7 @@ export function ClassicProductPage() {
       ? product.images
       : product.primary_image
         ? [product.primary_image]
-        : [];
+        : [{ url: catalogImageSrc(null, "product"), alt: product.name }];
 
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-6 py-12">
@@ -55,7 +56,7 @@ export function ClassicProductPage() {
             // eslint-disable-next-line @next/next/no-img-element
             <img
               key={image.url}
-              src={image.url}
+              src={catalogImageSrc(image.url, "product")}
               alt={image.alt ?? product.name}
               className="w-full object-cover"
             />

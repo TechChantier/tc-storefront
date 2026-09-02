@@ -1,0 +1,634 @@
+{
+  "info": {
+    "_postman_id": "b7e4d9a2-1c5f-4e8b-9a0d-storefront-api",
+    "name": "TCPoS Storefront API",
+    "description": "TC Market \u2194 TCPoS storefront surface (`/api/storefront`).\n\n**Auth:** `Authorization: Bearer {{storefront_service_token}}` (= `.env` `STOREFRONT_SERVICE_TOKEN`).\n\n**Hosts:**\n- Resolve \u2192 `{{central_base_url}}`\n- Catalogue + orders \u2192 `{{tenant_base_url}}`\n\nSee `docs/storefront-api-specs.md` and `mindmap/storefront-postman/README.md`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{storefront_service_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "central_base_url",
+      "value": "http://tcpos.local"
+    },
+    {
+      "key": "tenant_base_url",
+      "value": "http://demo.tcpos.local"
+    },
+    {
+      "key": "locale",
+      "value": "en"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Resolve (central)",
+      "description": "From `routes/storefront.php`. Call on the **central** host. Body uses the **Market** hostname, not the TCPoS tenant host.",
+      "item": [
+        {
+          "name": "Resolve storefront",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.success && json.data) {",
+                  "    if (json.data.tcpos_subdomain) {",
+                  "        pm.environment.set('tcpos_subdomain', json.data.tcpos_subdomain);",
+                  "    }",
+                  "    if (json.data.default_locale) {",
+                  "        pm.environment.set('locale', json.data.default_locale);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hostname\": \"{{market_hostname}}\"\n}"
+            },
+            "url": {
+              "raw": "{{central_base_url}}/api/storefront/resolve",
+              "host": [
+                "{{central_base_url}}"
+              ],
+              "path": [
+                "api",
+                "storefront",
+                "resolve"
+              ]
+            },
+            "description": "`POST /api/storefront/resolve`\n\nMaps a Market storefront hostname to `tcpos_subdomain` + branding/config.\n\n**Body**\n| Field | Required |\n|-------|----------|\n| `hostname` | yes |\n\nOn success, test script saves `tcpos_subdomain` and `locale` into the environment."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"hostname\": \"demo.tcmarket.app\"\n}"
+                },
+                "url": {
+                  "raw": "{{central_base_url}}/api/storefront/resolve",
+                  "host": [
+                    "{{central_base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "storefront",
+                    "resolve"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"tcpos_subdomain\": \"demo\",\n    \"storefront_subdomain\": \"demo\",\n    \"storefront_status\": \"active\",\n    \"template_key\": \"modern\",\n    \"default_locale\": \"en\",\n    \"supported_locales\": [\"en\", \"fr\"],\n    \"current_domain\": \"demo.tcmarket.app\",\n    \"primary_domain\": \"demo.tcmarket.app\",\n    \"branding\": {\n      \"business_name\": \"Demojjk\",\n      \"logo_url\": null,\n      \"favicon_url\": null,\n      \"primary_color\": null,\n      \"secondary_color\": null,\n      \"font_key\": \"default\"\n    },\n    \"business\": {\n      \"phone\": \"+237670000000\",\n      \"email\": \"dev@tcpos.local\",\n      \"address\": \"Dev Address\",\n      \"whatsapp_number\": null\n    },\n    \"sections\": {\n      \"hero\": true,\n      \"live_chat\": false,\n      \"categories\": true,\n      \"promotions\": false,\n      \"new_arrivals\": true,\n      \"testimonials\": false,\n      \"featured_products\": true\n    },\n    \"seo\": {\n      \"title_en\": null,\n      \"title_fr\": null,\n      \"description_en\": null,\n      \"description_fr\": null,\n      \"indexing_enabled\": true\n    },\n    \"config_version\": 5,\n    \"updated_at\": \"2026-08-04T14:48:23Z\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "1. Products (tenant)",
+      "description": "From `routes/storefront-tenant.php`. Call on `{{tenant_base_url}}`.",
+      "item": [
+        {
+          "name": "List products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.success && Array.isArray(json.data) && json.data.length) {",
+                  "    const first = json.data[0];",
+                  "    if (first.slug) pm.environment.set('product_slug', first.slug);",
+                  "    if (first.id) pm.environment.set('product_id', first.id);",
+                  "    if (first.category && first.category.slug) {",
+                  "        pm.environment.set('category_slug', first.category.slug);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{tenant_base_url}}/api/storefront/products?locale={{locale}}&page={{page}}&per_page={{per_page}}",
+              "host": [
+                "{{tenant_base_url}}"
+              ],
+              "path": [
+                "api",
+                "storefront",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "{{locale}}",
+                  "description": "Must be in supported_locales"
+                },
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "per_page",
+                  "value": "{{per_page}}",
+                  "description": "1\u2013100, default 24"
+                },
+                {
+                  "key": "category",
+                  "value": "{{category_slug}}",
+                  "description": "Filter by category slug",
+                  "disabled": true
+                },
+                {
+                  "key": "featured",
+                  "value": "1",
+                  "description": "Only featured when set",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Matches code / localized name",
+                  "disabled": true
+                },
+                {
+                  "key": "min_price",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "max_price",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "availability",
+                  "value": "all",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "`GET /api/storefront/products`\n\nPaginated visible products. Locale is a **query** param (not body).\n\nTest script saves first product `slug`, `id`, and category slug to the environment."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{tenant_base_url}}/api/storefront/products?locale=en",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "storefront",
+                    "products"
+                  ],
+                  "query": [
+                    {
+                      "key": "locale",
+                      "value": "en"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": \"a26c26c1-58c9-464a-8cf3-dbe35d6849bf\",\n      \"slug\": \"cocomaster0mi-oo\",\n      \"name\": \"cocomaster\",\n      \"short_description\": \"this is it\",\n      \"price\": 329,\n      \"compare_at_price\": null,\n      \"currency\": \"XAF\",\n      \"available\": true,\n      \"stock_quantity\": 400,\n      \"track_stock\": true,\n      \"featured\": false,\n      \"category\": {\n        \"id\": \"169847dc-b269-4c8e-8449-e1b8d02d9d1c\",\n        \"name\": \"Beer\",\n        \"slug\": \"beer\"\n      },\n      \"primary_image\": {\n        \"url\": \"http://demo.tcpos.local/uploads/main_product/\u2026/image.jpeg\",\n        \"alt\": \"cocomaster\"\n      },\n      \"updated_at\": \"2026-08-04T14:31:43Z\"\n    }\n  ],\n  \"meta\": {\n    \"current_page\": 1,\n    \"per_page\": 24,\n    \"last_page\": 1,\n    \"total\": 1,\n    \"from\": 1,\n    \"to\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get product by slug",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200 or 308', function () {",
+                  "    pm.expect([200, 308]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.success && json.data && json.data.id) {",
+                  "    pm.environment.set('product_id', json.data.id);",
+                  "    if (json.data.slug) pm.environment.set('product_slug', json.data.slug);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{tenant_base_url}}/api/storefront/products/{{product_slug}}?locale={{locale}}",
+              "host": [
+                "{{tenant_base_url}}"
+              ],
+              "path": [
+                "api",
+                "storefront",
+                "products",
+                "{{product_slug}}"
+              ],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "{{locale}}"
+                }
+              ]
+            },
+            "description": "`GET /api/storefront/products/{slug}`\n\nProduct card fields + `description`, `seo`, `images`, `variants`.\n\nRetired slug may return `308` with `code: SLUG_REDIRECT`."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{tenant_base_url}}/api/storefront/products/{{product_slug}}?locale=en",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "storefront",
+                    "products",
+                    "{{product_slug}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "locale",
+                      "value": "en"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"a26c26c1-58c9-464a-8cf3-dbe35d6849bf\",\n    \"slug\": \"cocomaster0mi-oo\",\n    \"name\": \"cocomaster\",\n    \"short_description\": \"this is it\",\n    \"price\": 329,\n    \"compare_at_price\": null,\n    \"currency\": \"XAF\",\n    \"available\": true,\n    \"stock_quantity\": 400,\n    \"track_stock\": true,\n    \"featured\": false,\n    \"category\": {\n      \"id\": \"169847dc-b269-4c8e-8449-e1b8d02d9d1c\",\n      \"name\": \"Beer\",\n      \"slug\": \"beer\"\n    },\n    \"primary_image\": {\n      \"url\": \"http://demo.tcpos.local/uploads/\u2026/image.jpeg\",\n      \"alt\": \"cocomaster\"\n    },\n    \"updated_at\": \"2026-08-04T14:31:43Z\",\n    \"description\": \"ksjdfkjf\",\n    \"seo\": {\n      \"title\": \"jksjdfkjd\",\n      \"description\": \"jlskjdflkj\"\n    },\n    \"images\": [\n      { \"url\": \"http://demo.tcpos.local/uploads/\u2026/image.jpeg\", \"alt\": \"cocomaster\" }\n    ],\n    \"variants\": []\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Categories (tenant)",
+      "description": "From `routes/storefront-tenant.php`.",
+      "item": [
+        {
+          "name": "List categories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.success && Array.isArray(json.data) && json.data.length) {",
+                  "    if (json.data[0].slug) {",
+                  "        pm.environment.set('category_slug', json.data[0].slug);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{tenant_base_url}}/api/storefront/categories?locale={{locale}}",
+              "host": [
+                "{{tenant_base_url}}"
+              ],
+              "path": [
+                "api",
+                "storefront",
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "{{locale}}"
+                },
+                {
+                  "key": "featured",
+                  "value": "1",
+                  "description": "Only featured when set",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "`GET /api/storefront/categories`\n\nVisible categories with `product_count` of storefront-visible products."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{tenant_base_url}}/api/storefront/categories?locale=en",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "storefront",
+                    "categories"
+                  ],
+                  "query": [
+                    {
+                      "key": "locale",
+                      "value": "en"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": \"169847dc-b269-4c8e-8449-e1b8d02d9d1c\",\n      \"slug\": \"beer\",\n      \"name\": \"Beer\",\n      \"description\": null,\n      \"featured\": false,\n      \"product_count\": 1,\n      \"image\": null,\n      \"seo\": {\n        \"title\": \"Beer\",\n        \"description\": null\n      }\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get category by slug",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{tenant_base_url}}/api/storefront/categories/{{category_slug}}?locale={{locale}}",
+              "host": [
+                "{{tenant_base_url}}"
+              ],
+              "path": [
+                "api",
+                "storefront",
+                "categories",
+                "{{category_slug}}"
+              ],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "{{locale}}"
+                }
+              ]
+            },
+            "description": "`GET /api/storefront/categories/{slug}`\n\nCategory metadata only. Load products with:\n`GET /api/storefront/products?category={{category_slug}}`\n\nRetired slug may return `308` + `SLUG_REDIRECT`."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Orders (tenant)",
+      "description": "From `routes/storefront-tenant.php`. Prices/stock are authoritative on TCPoS. Never send `final_total` / `tenant_id`.",
+      "item": [
+        {
+          "name": "Create order",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get('idempotency_key')) {",
+                  "    pm.environment.set('idempotency_key', pm.variables.replaceIn('{{$guid}}'));",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201 or idempotent replay', function () {",
+                  "    pm.expect([201, 200]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idempotency_key\": \"{{idempotency_key}}\",\n  \"customer\": {\n    \"name\": \"Jane Doe\",\n    \"phone\": \"670000001\",\n    \"email\": \"jane@example.com\",\n    \"country\": \"Cameroon\",\n    \"city\": \"Douala\",\n    \"address\": \"Akwa, Street 12\"\n  },\n  \"fulfillment\": {\n    \"method\": \"delivery\",\n    \"address\": \"Bonapriso, Gate B\",\n    \"note\": \"Call on arrival\"\n  },\n  \"items\": [\n    {\n      \"product_id\": \"{{product_id}}\",\n      \"quantity\": 1,\n      \"displayed_price\": 329\n    }\n  ],\n  \"locale\": \"{{locale}}\"\n}"
+            },
+            "url": {
+              "raw": "{{tenant_base_url}}/api/storefront/orders",
+              "host": [
+                "{{tenant_base_url}}"
+              ],
+              "path": [
+                "api",
+                "storefront",
+                "orders"
+              ]
+            },
+            "description": "`POST /api/storefront/orders`\n\nCreates an unpaid pending sale.\n\n**Required**\n- `idempotency_key` (UUID) \u2014 pre-request generates one if empty\n- `customer.name`, `customer.phone`, `customer.country`, `customer.city`, `customer.address`\n- `fulfilment.method` (`delivery` | `pickup`); `address` required for delivery\n- `items[]` with `product_id` + `quantity`\n\n**Prohibited:** `variant_id`, `final_total` / `final_price`, `tenant_id` / `tcpos_subdomain`\n\nClear `idempotency_key` in the env before a new distinct order, or reuse it to test replay."
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"idempotency_key\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"customer\": {\n    \"name\": \"Jane Doe\",\n    \"phone\": \"670000001\",\n    \"email\": \"jane@example.com\",\n    \"country\": \"Cameroon\",\n    \"city\": \"Douala\",\n    \"address\": \"Akwa, Street 12\"\n  },\n  \"fulfillment\": {\n    \"method\": \"delivery\",\n    \"address\": \"Bonapriso, Gate B\",\n    \"note\": \"Call on arrival\"\n  },\n  \"items\": [\n    {\n      \"product_id\": \"a26c26c1-58c9-464a-8cf3-dbe35d6849bf\",\n      \"quantity\": 1,\n      \"displayed_price\": 329\n    }\n  ],\n  \"locale\": \"en\"\n}"
+                },
+                "url": {
+                  "raw": "{{tenant_base_url}}/api/storefront/orders",
+                  "host": [
+                    "{{tenant_base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "storefront",
+                    "orders"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"public_reference\": \"SF-20260804-A1B2\",\n    \"status\": \"pending\",\n    \"currency\": \"XAF\",\n    \"subtotal\": 329,\n    \"delivery_fee\": 0,\n    \"tax\": 0,\n    \"total\": 329,\n    \"created_at\": \"2026-08-04T15:01:22+00:00\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create order (pickup)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set('idempotency_key', pm.variables.replaceIn('{{$guid}}'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idempotency_key\": \"{{idempotency_key}}\",\n  \"customer\": {\n    \"name\": \"Jane Doe\",\n    \"phone\": \"670000001\",\n    \"country\": \"Cameroon\",\n    \"city\": \"Douala\",\n    \"address\": \"Akwa, Street 12\"\n  },\n  \"fulfillment\": {\n    \"method\": \"pickup\",\n    \"note\": \"Ready after 5pm\"\n  },\n  \"items\": [\n    {\n      \"product_id\": \"{{product_id}}\",\n      \"quantity\": 1\n    }\n  ],\n  \"locale\": \"{{locale}}\"\n}"
+            },
+            "url": {
+              "raw": "{{tenant_base_url}}/api/storefront/orders",
+              "host": [
+                "{{tenant_base_url}}"
+              ],
+              "path": [
+                "api",
+                "storefront",
+                "orders"
+              ]
+            },
+            "description": "Same endpoint with `fulfilment.method = pickup` (no address). Always generates a fresh idempotency key."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

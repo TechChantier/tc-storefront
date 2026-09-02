@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { catalogImageSrc } from "@/lib/catalog/image";
 import {
   buildProductListHref,
   DEFAULT_PRODUCT_PAGE,
@@ -111,18 +112,12 @@ export function ClassicProductListPage() {
                 href={`/${locale}/products/${product.slug}`}
                 className="block"
               >
-                {product.primary_image?.url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={product.primary_image.url}
-                    alt={product.primary_image.alt ?? product.name}
-                    className="h-48 w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-48 items-center justify-center bg-stone-100 text-sm text-stone-400">
-                    No image
-                  </div>
-                )}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={catalogImageSrc(product.primary_image?.url, "product")}
+                  alt={product.primary_image?.alt ?? product.name}
+                  className="h-48 w-full object-cover"
+                />
                 <div className="p-4">
                   <h2 className="text-lg">{product.name}</h2>
                   <p className="mt-1 text-sm text-stone-600">

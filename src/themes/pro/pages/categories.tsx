@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { catalogImageSrc } from "@/lib/catalog/image";
 import { buildProductListHref } from "@/lib/catalog/product-query";
 import { useStorefrontStore } from "@/stores/storefront-store";
 
@@ -29,18 +30,12 @@ export function ProCategoryListPage() {
                 })}
                 className="flex items-center gap-4 py-4 hover:text-white"
               >
-                {category.image?.url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={category.image.url}
-                    alt={category.image.alt ?? category.name}
-                    className="h-16 w-16 shrink-0 object-cover"
-                  />
-                ) : (
-                  <div className="flex h-16 w-16 shrink-0 items-center justify-center bg-slate-800 text-xs uppercase tracking-wider text-slate-500">
-                    No image
-                  </div>
-                )}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={catalogImageSrc(category.image?.url, "category")}
+                  alt={category.image?.alt ?? category.name}
+                  className="h-16 w-16 shrink-0 object-cover"
+                />
                 <span className="min-w-0 flex-1 text-lg font-medium">
                   {category.name}
                 </span>

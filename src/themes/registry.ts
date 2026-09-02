@@ -1,6 +1,7 @@
 import type { StorefrontTemplate } from "@/themes/contracts";
 import classicTheme from "@/themes/classic";
 import proTheme from "@/themes/pro";
+import vibrantTheme from "@/themes/vibrant";
 
 /**
  * Explicit template registry. Keys must match TCPoS `template_key` values.
@@ -9,6 +10,7 @@ import proTheme from "@/themes/pro";
 export const themeRegistry = {
   classic: classicTheme,
   pro: proTheme,
+  vibrant: vibrantTheme,
 } as const satisfies Record<string, StorefrontTemplate>;
 
 export type TemplateKey = keyof typeof themeRegistry;
