@@ -13,9 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "TC Market",
-  },
+  title: "TC Market",
   description: "TC Market storefront",
   icons: {
     icon: "/ico.png",
