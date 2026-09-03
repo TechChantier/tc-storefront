@@ -29,13 +29,13 @@ Themes are always **client components** (`"use client"`) so they can call `useSt
 
 ### Do not import from a theme
 
-- `@/lib/catalog/get-*`
+- `@/lib/queries/get-*`
 - `@/lib/storefront/tcpos-client`
 - `@/lib/storefront/resolve-storefront`
 - `@/lib/order/create-order`
 - Env / service token
 
-URL helpers such as `buildProductListHref` from `@/lib/catalog/product-query` are allowed (they only build query strings).
+URL helpers such as `buildProductListHref` from `@/lib/queries/product-query` are allowed (they only build query strings).
 
 ---
 

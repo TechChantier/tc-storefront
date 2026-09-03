@@ -6,7 +6,7 @@ import type {
   orderPriceChangeSchema,
   orderResultSchema,
   orderStockErrorSchema,
-} from "./schema";
+} from "@/lib/schemas/order";
 
 export type CheckoutForm = z.infer<typeof checkoutFormSchema>;
 export type OrderPayload = z.infer<typeof orderPayloadSchema>;

@@ -1,4 +1,4 @@
-import type { CartItem, CartMutationResult, CartStockSource } from "./types";
+import type { CartItem, CartMutationResult, CartStockSource } from "@/lib/types/cart";
 import { clampQuantity, stockLimit } from "./stock";
 
 function snapshot(source: CartStockSource, quantity: number): CartItem {

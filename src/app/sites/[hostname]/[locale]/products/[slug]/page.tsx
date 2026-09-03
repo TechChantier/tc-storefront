@@ -2,7 +2,7 @@ import { notFound, permanentRedirect, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { HydrateProduct } from "@/components/shared/catalog-hydrators";
 import { StorefrontErrorView } from "@/components/shared/storefront-error-view";
-import { getProduct } from "@/lib/catalog/get-product";
+import { getProduct } from "@/lib/queries/get-product";
 import {
   buildStorefrontMetadata,
   fallbackStorefrontMetadata,

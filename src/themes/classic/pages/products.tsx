@@ -5,7 +5,7 @@ import { catalogImageSrc } from "@/lib/catalog/image";
 import {
   buildProductListHref,
   DEFAULT_PRODUCT_PAGE,
-} from "@/lib/catalog/product-query";
+} from "@/lib/queries/product-query";
 import { useStorefrontStore } from "@/stores/storefront-store";
 import { ClassicAddToCartButton } from "../cart-controls";
 

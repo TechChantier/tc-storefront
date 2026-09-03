@@ -5,13 +5,13 @@ import {
   HydrateProducts,
 } from "@/components/shared/catalog-hydrators";
 import { StorefrontErrorView } from "@/components/shared/storefront-error-view";
-import { getCategories } from "@/lib/catalog/get-categories";
-import { getCategory } from "@/lib/catalog/get-category";
-import { getProducts } from "@/lib/catalog/get-products";
+import { getCategories } from "@/lib/queries/get-categories";
+import { getCategory } from "@/lib/queries/get-category";
+import { getProducts } from "@/lib/queries/get-products";
 import {
   DEFAULT_PRODUCT_QUERY,
   parseProductQuery,
-} from "@/lib/catalog/product-query";
+} from "@/lib/queries/product-query";
 import {
   buildStorefrontMetadata,
   fallbackStorefrontMetadata,

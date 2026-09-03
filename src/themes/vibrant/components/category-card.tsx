@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { Category } from "@/lib/catalog/types";
+import type { Category } from "@/lib/types/catalog";
 import { Media } from "./media";
 
 export function CategoryCard({

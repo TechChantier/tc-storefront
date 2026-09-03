@@ -85,6 +85,7 @@ jobs:
              cd /var/www/tc-storefront
              export STOREFRONT_IMAGE='${STOREFRONT_IMAGE}'
              export STOREFRONT_BIND=127.0.0.1
+             export STOREFRONT_HOST_PORT=3001
              docker compose pull
              docker compose up -d --remove-orphans
              docker image prune -f

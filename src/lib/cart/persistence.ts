@@ -1,5 +1,5 @@
-import { CART_PERSIST_VERSION, parsePersistedCart } from "./schema";
-import type { CartItem } from "./types";
+import { CART_PERSIST_VERSION, parsePersistedCart } from "@/lib/schemas/cart";
+import type { CartItem } from "@/lib/types/cart";
 
 export function cartStorageKey(tcposSubdomain: string): string {
   return `tc-storefront-cart:${tcposSubdomain}`;

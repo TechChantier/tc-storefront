@@ -1,5 +1,5 @@
 import { resolveFulfillmentAddress } from "./payload";
-import type { CheckoutForm } from "./types";
+import type { CheckoutForm } from "@/lib/types/order";
 
 export function formatOrderStatusLabel(status: string): string {
   const trimmed = status.trim();

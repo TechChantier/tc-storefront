@@ -1,18 +1,13 @@
-export const PRODUCT_AVAILABILITY = ["all", "in_stock", "out_of_stock"] as const;
+import type {
+  ProductAvailability,
+  ProductQuery,
+} from "@/lib/types/catalog";
 
-export type ProductAvailability = (typeof PRODUCT_AVAILABILITY)[number];
-
-export type ProductQuery = {
-  page: number;
-  per_page: number;
-  locale?: string;
-  category?: string;
-  featured?: boolean;
-  search?: string;
-  min_price?: number;
-  max_price?: number;
-  availability?: ProductAvailability;
-};
+export const PRODUCT_AVAILABILITY = [
+  "all",
+  "in_stock",
+  "out_of_stock",
+] as const satisfies readonly ProductAvailability[];
 
 export const DEFAULT_PRODUCT_PAGE = 1;
 export const DEFAULT_PRODUCT_PER_PAGE = 24;

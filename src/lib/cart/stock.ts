@@ -1,4 +1,4 @@
-import type { CartItem, CartStockSource } from "./types";
+import type { CartItem, CartStockSource } from "@/lib/types/cart";
 
 export type StockLimit =
   | { kind: "none" }

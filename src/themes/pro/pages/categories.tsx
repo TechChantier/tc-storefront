@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { catalogImageSrc } from "@/lib/catalog/image";
-import { buildProductListHref } from "@/lib/catalog/product-query";
+import { buildProductListHref } from "@/lib/queries/product-query";
 import { useStorefrontStore } from "@/stores/storefront-store";
 
 export function ProCategoryListPage() {

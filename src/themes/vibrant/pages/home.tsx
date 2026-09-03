@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRef } from "react";
-import { buildProductListHref } from "@/lib/catalog/product-query";
+import { buildProductListHref } from "@/lib/queries/product-query";
 import { useStorefrontStore } from "@/stores/storefront-store";
 import { Button } from "../components/button";
 import { CategoryCard } from "../components/category-card";

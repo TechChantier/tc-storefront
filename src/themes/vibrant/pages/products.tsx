@@ -4,7 +4,7 @@ import Link from "next/link";
 import {
   buildProductListHref,
   DEFAULT_PRODUCT_PAGE,
-} from "@/lib/catalog/product-query";
+} from "@/lib/queries/product-query";
 import { useStorefrontStore } from "@/stores/storefront-store";
 import { Button } from "../components/button";
 import { Container } from "../components/container";

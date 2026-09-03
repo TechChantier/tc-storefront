@@ -6,7 +6,7 @@ import { decodeHostnameParam } from "@/lib/tenant/hostname";
 import { getTheme, isRegisteredTemplateKey } from "@/themes/registry";
 import type { StorefrontTemplate } from "@/themes/contracts";
 import { resolveStorefront } from "./resolve-storefront";
-import type { StorefrontConfig } from "./types";
+import type { StorefrontConfig } from "@/lib/types/storefront";
 
 export type StorefrontLoadErrorKind =
   | "not_found"
