@@ -6,7 +6,7 @@ import type {
   storefrontSectionsSchema,
   storefrontSeoSchema,
   storefrontStatusSchema,
-} from "./schema";
+} from "@/lib/schemas/storefront";
 
 export type StorefrontStatus = z.infer<typeof storefrontStatusSchema>;
 export type StorefrontBranding = z.infer<typeof storefrontBrandingSchema>;

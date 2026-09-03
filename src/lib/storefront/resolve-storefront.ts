@@ -9,8 +9,8 @@ import { errorCodeFromHttpStatus } from "./errors";
 import {
   parseStorefrontErrorEnvelope,
   parseStorefrontResolveSuccess,
-} from "./schema";
-import type { StorefrontConfig } from "./types";
+} from "@/lib/schemas/storefront";
+import type { StorefrontConfig } from "@/lib/types/storefront";
 
 export type ResolveStorefrontResult =
   | { status: "resolved"; config: StorefrontConfig }

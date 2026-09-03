@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import type { Product } from "@/lib/catalog/types";
+import type { Product } from "@/lib/types/catalog";
 import { Icon } from "./icon";
 import { ProductCard } from "./product-card";
 

@@ -22,12 +22,14 @@ import type {
   CartErrorCode,
   CartItem,
   CartStockSource,
-} from "@/lib/cart/types";
-import type { Category, PaginationMeta, Product } from "@/lib/catalog/types";
-import {
-  DEFAULT_PRODUCT_QUERY,
-  type ProductQuery,
-} from "@/lib/catalog/product-query";
+} from "@/lib/types/cart";
+import type {
+  Category,
+  PaginationMeta,
+  Product,
+  ProductQuery,
+} from "@/lib/types/catalog";
+import { DEFAULT_PRODUCT_QUERY } from "@/lib/queries/product-query";
 import { createOrder } from "@/lib/order/create-order";
 import {
   buildOrderPayload,
@@ -35,14 +37,14 @@ import {
   laravelFieldsToFormFields,
   orderPayloadHash,
 } from "@/lib/order/payload";
-import { flattenZodFieldErrors, MAX_ORDER_ITEMS, parseCheckoutForm } from "@/lib/order/schema";
+import { flattenZodFieldErrors, MAX_ORDER_ITEMS, parseCheckoutForm } from "@/lib/schemas/order";
 import type {
   CheckoutForm,
   OrderError,
   OrderResult,
   OrderStatus,
-} from "@/lib/order/types";
-import type { StorefrontConfig } from "@/lib/storefront/types";
+} from "@/lib/types/order";
+import type { StorefrontConfig } from "@/lib/types/storefront";
 
 export type { CartErrorCode, CartItem, CartStockSource };
 export type { CheckoutForm, OrderError, OrderResult, OrderStatus };

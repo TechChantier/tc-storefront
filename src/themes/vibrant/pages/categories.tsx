@@ -1,6 +1,6 @@
 "use client";
 
-import { buildProductListHref } from "@/lib/catalog/product-query";
+import { buildProductListHref } from "@/lib/queries/product-query";
 import { useStorefrontStore } from "@/stores/storefront-store";
 import { CategoryCard } from "../components/category-card";
 import { Container } from "../components/container";

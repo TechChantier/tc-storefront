@@ -8,8 +8,8 @@ import {
   orderStockErrorSchema,
   parseOrderPayload,
   parseOrderResult,
-} from "@/lib/order/schema";
-import type { CreateOrderResult, OrderError } from "@/lib/order/types";
+} from "@/lib/schemas/order";
+import type { CreateOrderResult, OrderError } from "@/lib/types/order";
 import { resolveStorefront } from "@/lib/storefront/resolve-storefront";
 import { storefrontMutate } from "@/lib/storefront/tcpos-client";
 

@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { cartErrorCodeSchema, cartItemSchema } from "./schema";
+import type { cartErrorCodeSchema, cartItemSchema } from "@/lib/schemas/cart";
 
 export type CartErrorCode = z.infer<typeof cartErrorCodeSchema>;
 export type CartItem = z.infer<typeof cartItemSchema>;

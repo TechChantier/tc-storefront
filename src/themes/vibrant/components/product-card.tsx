@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { Product } from "@/lib/catalog/types";
+import type { Product } from "@/lib/types/catalog";
 import { formatPrice } from "../lib/format";
 import { cn } from "../lib/cn";
 import { Media } from "./media";

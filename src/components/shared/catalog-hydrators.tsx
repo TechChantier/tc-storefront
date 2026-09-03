@@ -1,8 +1,12 @@
 "use client";
 
 import { useLayoutEffect, type ReactNode } from "react";
-import type { Category, PaginationMeta, Product } from "@/lib/catalog/types";
-import type { ProductQuery } from "@/lib/catalog/product-query";
+import type {
+  Category,
+  PaginationMeta,
+  Product,
+  ProductQuery,
+} from "@/lib/types/catalog";
 import {
   useStorefrontStore,
   type CatalogStatus,

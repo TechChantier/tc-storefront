@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useState, type ReactNode } from "react";
 import { loadPersistedCart } from "@/lib/cart/persistence";
-import type { StorefrontConfig } from "@/lib/storefront/types";
+import type { StorefrontConfig } from "@/lib/types/storefront";
 import {
   createStorefrontStore,
   StorefrontStoreContext,

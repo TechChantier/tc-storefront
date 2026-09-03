@@ -5,9 +5,9 @@ import {
   HydrateFeaturedProducts,
 } from "@/components/shared/catalog-hydrators";
 import { StorefrontErrorView } from "@/components/shared/storefront-error-view";
-import { getCategories } from "@/lib/catalog/get-categories";
-import { getProducts } from "@/lib/catalog/get-products";
-import { DEFAULT_PRODUCT_QUERY } from "@/lib/catalog/product-query";
+import { getCategories } from "@/lib/queries/get-categories";
+import { getProducts } from "@/lib/queries/get-products";
+import { DEFAULT_PRODUCT_QUERY } from "@/lib/queries/product-query";
 import { storefrontPageMetadata } from "@/lib/seo/page-metadata";
 import { loadReadyStorefront } from "@/lib/storefront/load-storefront";
 import type { CatalogStatus } from "@/stores/storefront-store";

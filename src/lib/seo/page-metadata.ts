@@ -2,7 +2,7 @@ import "server-only";
 
 import type { Metadata } from "next";
 import { loadReadyStorefront } from "@/lib/storefront/load-storefront";
-import type { StorefrontConfig } from "@/lib/storefront/types";
+import type { StorefrontConfig } from "@/lib/types/storefront";
 
 export const STOREFRONT_ICON_PATH = "/ico.png";
 

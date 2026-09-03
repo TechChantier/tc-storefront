@@ -1,6 +1,6 @@
-import type { CartItem } from "@/lib/cart/types";
-import { MAX_ORDER_ITEMS, parseCheckoutForm } from "./schema";
-import type { CheckoutForm, OrderPayload } from "./types";
+import type { CartItem } from "@/lib/types/cart";
+import { MAX_ORDER_ITEMS, parseCheckoutForm } from "@/lib/schemas/order";
+import type { CheckoutForm, OrderPayload } from "@/lib/types/order";
 
 export const EMPTY_CHECKOUT_FORM: CheckoutForm = {
   name: "",
