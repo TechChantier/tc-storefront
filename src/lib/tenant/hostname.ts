@@ -63,6 +63,10 @@ export function normalizeHostname(
   }
 
   if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(hostname)) {
+    // This machine: browsers often send 127.0.0.1; local TCPOS treats that as localhost.
+    if (hostname === "127.0.0.1") {
+      return { ok: true, hostname: "localhost" };
+    }
     return { ok: false, reason: "hostname_unsupported_ip" };
   }
 

@@ -84,6 +84,7 @@ jobs:
              docker login ghcr.io -u '${GHCR_USER}' --password-stdin
              cd /var/www/tc-storefront
              export STOREFRONT_IMAGE='${STOREFRONT_IMAGE}'
+             export STOREFRONT_BIND=127.0.0.1
              docker compose pull
              docker compose up -d --remove-orphans
              docker image prune -f
