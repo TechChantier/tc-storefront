@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "docker:local": "docker compose up --build -d",
+    "docker:local:down": "docker compose down"
   },
   "dependencies": {
     "next": "16.3.3",

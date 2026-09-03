@@ -1,8 +1,10 @@
-# Deploy TC Storefront (EC2 + Apache + PM2 + wildcard SSL)
+# Deploy TC Storefront (EC2 + Apache + Docker)
 
 Production guide for **tc-storefront** on an Ubuntu EC2/VPS.
 
-Domain: **`tcpos.site`**. EC2 IP: **`3.83.159.34`**. Every shop is a subdomain:
+The Next.js image is **built on GitHub Actions** and pulled on the server. Do **not** run `npm run build` on the t2.small — that OOM-kills the box.
+
+Domain: **`tcpos.site`**. EC2 IP: **`54.152.179.126`**. Every shop is a subdomain:
 
 ```text
 https://shop1.tcpos.site
@@ -10,12 +12,12 @@ https://shop2.tcpos.site
 https://anything.tcpos.site
 ```
 
-One Next.js process serves all of them. Tenant identity comes from the `Host` header (Laravel `/api/storefront/resolve`). Apache must **preserve that host**.
+One Next.js container serves all of them. Tenant identity comes from the `Host` header (Laravel `/api/storefront/resolve`). Apache must **preserve that host**.
 
 ```text
 Browser  https://shop1.tcpos.site
    → Apache :443  (*.tcpos.site wildcard cert)
-   → http://127.0.0.1:3001  (PM2 → next start)
+   → http://127.0.0.1:3001  (Docker → next standalone)
    → POST {TCPOS_API_BASE_URL}/api/storefront/resolve
 ```
 
@@ -23,15 +25,15 @@ Browser  https://shop1.tcpos.site
 
 ## 0. What must already be true
 
-- EC2 public IP is **`3.83.159.34`**.
+- EC2 public IP is **`54.152.179.126`**.
 - Namecheap **A** records:
-  - `@` → `3.83.159.34` (optional, apex `tcpos.site`)
-  - `*` → `3.83.159.34` (wildcard `*.tcpos.site`)
-- Security group / firewall: **22**, **80**, **443** inbound. Do **not** open the Node port to the world.
+  - `@` → `54.152.179.126` (optional, apex `tcpos.site`)
+  - `*` → `54.152.179.126` (wildcard `*.tcpos.site`)
+- Security group / firewall: **22**, **80**, **443** inbound. Do **not** open the Node/Docker port to the world.
 - Central TCPoS API is reachable from the EC2 box (resolve runs server-side).
 - Each live shop hostname exists as a **verified** row in Laravel `storefront_domains` (e.g. `shop1.tcpos.site`) with `template_key` `classic` or `pro`.
 
-If another app on this same instance already uses port **3000** (for example manager), this guide uses **3001** for the storefront. Change it everywhere if needed.
+If another app on this same instance already uses port **3000** (for example manager), this guide uses **3001** on the host, mapped to **3000** in the container. Change the host mapping in `docker-compose.yml` if needed.
 
 ---
 
@@ -45,7 +47,7 @@ dig +short shop1.tcpos.site A
 dig +short anything-random.tcpos.site A
 ```
 
-All of those should return `3.83.159.34`. Wildcard is working when a name you never created still resolves.
+All of those should return `54.152.179.126`. Wildcard is working when a name you never created still resolves.
 
 ---
 
@@ -55,31 +57,22 @@ SSH in, then:
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y git nginx-common apache2 python3-certbot-apache
-```
-
-If Apache is not installed yet:
-
-```bash
-sudo apt-get install -y apache2
+sudo apt-get install -y git nginx-common apache2 python3-certbot-apache docker.io
+sudo apt-get install -y docker-compose-v2 || sudo apt-get install -y docker-compose-plugin
 sudo a2enmod proxy proxy_http headers rewrite ssl
 sudo systemctl enable --now apache2
+sudo systemctl enable --now docker
+sudo usermod -aG docker "$USER"
 ```
 
-Install Node 22 LTS:
+Log out and back in so the `docker` group applies. Confirm:
 
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-sudo apt-get install -y nodejs
-node -v
-npm -v
+docker version
+docker compose version
 ```
 
-Install PM2:
-
-```bash
-sudo npm i -g pm2
-```
+You do **not** need Node, npm, or PM2 on this box.
 
 ---
 
@@ -134,61 +127,74 @@ To automate later, switch to a Namecheap DNS plugin (`certbot-dns-namecheap`) so
 
 ---
 
-## 4. Clone and build the app
+## 4. Server env (secrets only)
+
+The app source is not built here. Keep compose + `.env` only:
 
 ```bash
 sudo mkdir -p /var/www/tc-storefront
 sudo chown "$USER":"$USER" /var/www/tc-storefront
 cd /var/www/tc-storefront
-git clone <YOUR_REPO_URL> .
 ```
 
 Create production env (never `NEXT_PUBLIC_` for the service token):
 
 ```bash
-cd /var/www/tc-storefront
-cat > .env <<'EOF'
+cat > /var/www/tc-storefront/.env <<'EOF'
 NODE_ENV=production
-PORT=3001
 TCPOS_API_BASE_URL=https://api.tcpos.app
 STOREFRONT_SERVICE_TOKEN=replace-with-production-token
 STOREFRONT_RESOLVE_REVALIDATE_SECONDS=60
 EOF
-chmod 600 .env
+chmod 600 /var/www/tc-storefront/.env
 ```
 
 `TCPOS_API_BASE_URL` is the **central** TCPoS host (the one that serves `POST /api/storefront/resolve`), not a tenant POS host. `STOREFRONT_SERVICE_TOKEN` must match Laravel `STOREFRONT_SERVICE_TOKEN`.
 
-Install and build:
+These values are read at **container start**, not baked into the image.
 
-```bash
-cd /var/www/tc-storefront
-npm ci
-npm run build
-```
+Copy `docker-compose.yml` from the repo into `/var/www/tc-storefront/` (GitHub Actions also scp’s it on every deploy).
 
 ---
 
-## 5. Start with PM2
+## 5. GitHub Actions (build on GitHub, run on EC2)
+
+Push to `main` (or run the workflow manually). GitHub:
+
+1. Builds the Docker image (`output: "standalone"`).
+2. Pushes `ghcr.io/techchantier/tc-storefront:<sha>` and `:latest`.
+3. SSHs to `54.152.179.126`, pulls the image, and runs `docker compose up -d`.
+
+### Repo secrets
+
+In GitHub → **Settings → Secrets and variables → Actions**:
+
+| Secret | Value |
+| --- | --- |
+| `DEPLOY_HOST` | `54.152.179.126` |
+| `DEPLOY_USER` | SSH user on the box (often `ubuntu`) |
+| `DEPLOY_SSH_KEY` | Private key whose public half is in `~/.ssh/authorized_keys` on the server |
+
+The workflow uses `GITHUB_TOKEN` to push/pull GHCR. After the first successful package publish, if pull on the server fails with `denied`, open the package at `https://github.com/orgs/TechChantier/packages` (or the repo **Packages** tab) and grant the `tc-storefront` repo access.
+
+### Deploy SSH key
+
+On your laptop:
 
 ```bash
-cd /var/www/tc-storefront
-PORT=3001 pm2 start npm --name tc-storefront -- start
-pm2 save
-pm2 startup
+ssh-keygen -t ed25519 -C "github-actions-tc-storefront" -f ./tc-storefront-deploy -N ""
 ```
 
-Run the command `pm2 startup` prints so it survives reboot.
-
-Check Node only (not public DNS yet):
+Put the **private** key in `DEPLOY_SSH_KEY`. On the server:
 
 ```bash
-curl -I http://127.0.0.1:3001
-pm2 status
-pm2 logs tc-storefront --lines 50
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo 'PASTE_PUBLIC_KEY_HERE' >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
 ```
 
-You should get a response from Next. `Host: 127.0.0.1` is not a shop hostname, so the HTML may be “storefront not found”. That is expected.
+Restrict the key to the deploy user. Do not reuse your personal SSH key.
 
 ---
 
@@ -263,6 +269,13 @@ is not what you want for wildcards. Copy options from another live site, or omit
 
 ## 7. Smoke test
 
+On the server:
+
+```bash
+docker compose -f /var/www/tc-storefront/docker-compose.yml ps
+curl -I -H "Host: shop1.tcpos.site" http://127.0.0.1:3001
+```
+
 From your laptop:
 
 ```bash
@@ -276,7 +289,7 @@ The certificate SAN list should include `tcpos.site` and `*.tcpos.site`.
 In a browser:
 
 1. `https://shop1.tcpos.site/` should redirect to `/{default_locale}` (e.g. `/en`) **if** Laravel knows that hostname.
-2. You should see `Classic — Home — …` or `Pro — Home — …` from `template_key`.
+2. You should see Classic or Pro from `template_key`.
 3. If Laravel still returns `modern`, you get the **unsupported template** page (that is correct until you change the key).
 4. Unknown subdomains show **storefront not found**.
 
@@ -286,35 +299,26 @@ Laravel must receive the Market hostname in resolve, e.g. `{ "hostname": "shop1.
 
 ## After a change
 
-### Code (pushed to git)
+### Code (pushed to `main`)
+
+GitHub Actions builds and deploys. On the server you should only see a new container:
 
 ```bash
 cd /var/www/tc-storefront
-git pull
-npm ci
-npm run build
-pm2 restart tc-storefront
+docker compose ps
+docker compose logs -f --tail 80
 ```
 
-Always rebuild. `pm2 restart` alone keeps the previous `.next` build.
+Do **not** `git pull` / `npm ci` / `npm run build` on this instance.
 
 ### Only `.env` (API URL or token)
 
-These are read at **runtime** by `next start` (not baked in like `NEXT_PUBLIC_*`):
+These are read at **runtime** when the container starts:
 
 ```bash
 cd /var/www/tc-storefront
 # edit .env
-pm2 restart tc-storefront --update-env
-```
-
-If the process was started with an inline `PORT=3001` and PM2 is not picking up `.env`:
-
-```bash
-cd /var/www/tc-storefront
-pm2 delete tc-storefront
-PORT=3001 pm2 start npm --name tc-storefront -- start
-pm2 save
+docker compose up -d --force-recreate
 ```
 
 ### Apache config only
@@ -330,9 +334,9 @@ sudo systemctl reload apache2
 
 | Task | Command |
 | --- | --- |
-| App status | `pm2 status` |
-| App logs | `pm2 logs tc-storefront` |
-| Restart app | `pm2 restart tc-storefront` |
+| App status | `cd /var/www/tc-storefront && docker compose ps` |
+| App logs | `docker compose logs -f tc-storefront` |
+| Restart app | `docker compose restart` |
 | Hit Node directly | `curl -I -H "Host: shop1.tcpos.site" http://127.0.0.1:3001` |
 | Apache errors | `sudo tail -f /var/log/apache2/tcpos.site.error.log` |
 | Cert expiry | `sudo certbot certificates` |
@@ -347,5 +351,8 @@ sudo systemctl reload apache2
 | Every shop shows “not found” | `ProxyPreserveHost` off, or hostname not in Laravel `storefront_domains` |
 | “Storefront unavailable” / misconfigured | Missing `STOREFRONT_SERVICE_TOKEN` or `TCPOS_API_BASE_URL` unreachable from EC2 |
 | “Unsupported template” | Laravel `template_key` is not `classic` or `pro` (often still `modern`) |
-| Apache 503 | PM2 not running, or proxy port is not `3001` |
-| `dig` for a subdomain is empty | Namecheap `*` A record not pointing at `3.83.159.34` |
+| Apache 503 | Container not running, or proxy port is not `3001` |
+| `docker compose pull` denied | GHCR package is private and the repo/token is not allowed to pull |
+| Actions SSH failure | `DEPLOY_SSH_KEY` / `authorized_keys` mismatch, or `DEPLOY_USER` is wrong |
+| `dig` for a subdomain is empty | Namecheap `*` A record not pointing at `54.152.179.126` |
+| Instance dies during deploy | You ran `npm run build` on the t2.small — use GitHub Actions instead |
