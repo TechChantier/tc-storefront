@@ -7,7 +7,7 @@ services:
     container_name: tc-storefront
     restart: unless-stopped
     ports:
-      - "${STOREFRONT_BIND:-0.0.0.0}:${STOREFRONT_HOST_PORT:-3000}:3000"
+      - "${STOREFRONT_BIND:-0.0.0.0}:${STOREFRONT_HOST_PORT:-3001}:3000"
     env_file:
       - path: .env
         required: false
