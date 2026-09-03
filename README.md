@@ -4,6 +4,7 @@ Multi-tenant Next.js storefront for TCPoS. Pushes to `main` build a Docker image
 
 [![Build and deploy](https://github.com/TechChantier/tc-storefront/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/TechChantier/tc-storefront/actions/workflows/deploy.yml)
 [![Production](https://img.shields.io/github/deployments/TechChantier/tc-storefront/production?logo=github&label=production)](https://github.com/TechChantier/tc-storefront/deployments/production)
+[![Release](https://img.shields.io/github/v/release/TechChantier/tc-storefront?label=release)](https://github.com/TechChantier/tc-storefront/releases)
 [![Last commit](https://img.shields.io/github/last-commit/TechChantier/tc-storefront/main)](https://github.com/TechChantier/tc-storefront/commits/main)
 
 Live demo site: [supaa-mall.tcpos.site](https://supaa-mall.tcpos.site/) · [Workflow runs](https://github.com/TechChantier/tc-storefront/actions/workflows/deploy.yml) · [Production deployments](https://github.com/TechChantier/tc-storefront/deployments/production)
@@ -40,3 +41,5 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 ## Deployment
 
 GitHub Actions builds the image and SSHs it onto the production host. Each successful `deploy` job is recorded against the [production](https://github.com/TechChantier/tc-storefront/deployments/production) environment, which is what the badges and the repo Deployments tab use.
+
+Versioned GitHub Releases start at **1.0.0**. Run **Release** from the Actions tab (default version `1.0.0`) to tag `v1.0.0`, publish the release, and label the GHCR image. Later versions use the same workflow with a new semver, or push a `vX.Y.Z` tag.
