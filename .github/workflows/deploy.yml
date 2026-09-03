@@ -87,6 +87,21 @@ jobs:
              export STOREFRONT_BIND=127.0.0.1
              export STOREFRONT_HOST_PORT=3001
              docker compose pull
-             docker compose up -d --remove-orphans
+             docker compose down --remove-orphans
+             docker compose up -d --force-recreate --remove-orphans
+             ok=0
+             for i in \$(seq 1 30); do
+               if curl -sS -I --max-time 2 http://127.0.0.1:3001/ >/dev/null 2>&1; then
+                 ok=1
+                 break
+               fi
+               sleep 2
+             done
+             if [ \"\$ok\" -ne 1 ]; then
+               echo 'Storefront did not become reachable on 127.0.0.1:3001' >&2
+               docker compose ps -a
+               docker logs --tail 200 tc-storefront || true
+               exit 1
+             fi
              docker image prune -f
              docker logout ghcr.io" <<< "$GHCR_TOKEN"
